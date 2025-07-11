@@ -1,0 +1,13 @@
+[project]
+name = "infrastructure"
+version = "0.1.0"
+authors = [{ name = "Hinsun", email = "vanhoai.adv@gmail.com" }]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+infrastructure = "infrastructure:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

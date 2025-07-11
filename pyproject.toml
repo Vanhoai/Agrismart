@@ -1,0 +1,41 @@
+[project]
+name = "agrismart"
+version = "0.1.0"
+description = "🐳 Agrismart: A Smart Farming Assistant for Sustainable Agriculture and Food Security"
+readme = "README.md"
+authors = [{ name = "Hinsun", email = "vanhoai.adv@gmail.com" }]
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi-camelcase>=2.0.0",
+    "fastapi[standard]>=0.116.0",
+    "pydantic-settings>=2.10.1",
+    "pymongo>=4.13.2",
+    "starlette>=0.46.2",
+    "supabase>=2.16.0",
+    "torch>=2.7.1",
+    "torchvision>=0.22.1",
+    "ultralytics>=8.3.163",
+]
+
+[tool.uv.workspace]
+members = [
+    "packages/vision",
+    "packages/core",
+    "packages/domain",
+    "packages/infrastructure",
+]
+
+[project.scripts]
+agrismart = "agrismart:main"
+benchmark = "benchmark:main"
+training = "training:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+core = { workspace = true }
+vision = { workspace = true }
+domain = { workspace = true }
+infrastructure = { workspace = true }
