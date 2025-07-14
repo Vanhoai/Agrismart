@@ -1,5 +1,11 @@
 sync:
 	uv sync --all-packages
 
-run:
+agrismart:
 	uv run agrismart
+
+benchmark:
+	uv run benchmark
+
+training:
+	uv run training
