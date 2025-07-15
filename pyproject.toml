@@ -8,10 +8,12 @@ requires-python = ">=3.13"
 dependencies = [
     "fastapi-camelcase>=2.0.0",
     "fastapi[standard]>=0.116.0",
+    "opencv-python>=4.11.0.86",
     "pydantic-settings>=2.10.1",
     "pymongo>=4.13.2",
     "starlette>=0.46.2",
     "supabase>=2.16.0",
+    "supervision>=0.25.1",
     "torch>=2.7.1",
     "torchvision>=0.22.1",
     "ultralytics>=8.3.163",
