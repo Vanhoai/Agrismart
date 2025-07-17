@@ -4,19 +4,17 @@ version = "0.1.0"
 description = "🐳 Agrismart: A Smart Farming Assistant for Sustainable Agriculture and Food Security"
 readme = "README.md"
 authors = [{ name = "Hinsun", email = "vanhoai.adv@gmail.com" }]
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "fastapi-camelcase>=2.0.0",
-    "fastapi[standard]>=0.116.0",
-    "kagglehub>=0.3.12",
+    "fastapi[standard]>=0.116.1",
     "opencv-python>=4.11.0.86",
     "pydantic-settings>=2.10.1",
     "pymongo>=4.13.2",
-    "starlette>=0.46.2",
+    "starlette>=0.47.1",
     "supabase>=2.16.0",
-    "supervision>=0.25.1",
-    "torch>=2.7.1",
-    "torchvision>=0.22.1",
+    "supervision>=0.26.0",
+    "tensorflow-macos>=2.16.2",
     "ultralytics>=8.3.163",
 ]
 

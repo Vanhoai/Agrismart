@@ -204,3 +204,9 @@ cython_debug/
 # JetBrains IDEs
 .idea
 saved
+
+# Model Exports
+*.onnx
+*.pte
+*.pth
+*.torchscript

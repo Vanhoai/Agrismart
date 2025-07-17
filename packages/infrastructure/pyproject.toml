@@ -2,7 +2,7 @@
 name = "infrastructure"
 version = "0.1.0"
 authors = [{ name = "Hinsun", email = "vanhoai.adv@gmail.com" }]
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = []
 
 [project.scripts]
