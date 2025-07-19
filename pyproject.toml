@@ -30,6 +30,7 @@ members = [
 agrismart = "agrismart:main"
 benchmark = "benchmark:main"
 training = "training:main"
+dataset = "dataset:main"
 
 [build-system]
 requires = ["hatchling"]
