@@ -1,6 +1,6 @@
 import os
 from core.helpers import LoggerHelper
-from vision.datasets import AgrismartRemakeDataset, AgrismartOriginalDataset
+from vision.dataset import AgrismartRemakeDataset, AgrismartOriginalDataset
 
 
 # uv run dataset --executor statistics --dataset original --modes "train valid test"
@@ -13,8 +13,8 @@ def remake(**kwargs) -> None:
     LoggerHelper.print_full_width("STARTING REMAKE")
 
     root_directory = os.getcwd()
-    directory = os.path.join(root_directory, "datasets", "remake")
-    original_directory = os.path.join(root_directory, "datasets", "rice-leaf-diseases")
+    directory = os.path.join(root_directory, "dataset", "remake")
+    original_directory = os.path.join(root_directory, "dataset", "rice-leaf-diseases")
 
     classnames = [
         "Bacterial Leaf Blight",

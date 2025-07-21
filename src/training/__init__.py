@@ -5,10 +5,10 @@ import numpy as np
 root_directory = os.getcwd()
 
 
-# image_path = os.path.join(root_path, "datasets", "rice-leaf-diseases", "val", "images",
+# image_path = os.path.join(root_path, "dataset", "rice-leaf-diseases", "val", "images",
 #                           "bacterial_leaf_blight-190-_JPG_jpg.rf.b1b836fd5c000bab6130e9d63a25c910.jpg")
 
-# label_path = os.path.join(root_path, "datasets", "rice-leaf-diseases", "val", "labels",
+# label_path = os.path.join(root_path, "dataset", "rice-leaf-diseases", "val", "labels",
 #                           "bacterial_leaf_blight-190-_JPG_jpg.rf.b1b836fd5c000bab6130e9d63a25c910.txt")
 
 # class_colors = {
@@ -133,8 +133,8 @@ root_directory = os.getcwd()
 # cv2.destroyAllWindows()
 
 def main() -> None:
-    # original_directory = os.path.join(root_directory, "datasets", "rice-leaf-diseases")
-    # remake_directory = os.path.join(root_directory, "datasets", "remake")
+    # original_directory = os.path.join(root_directory, "dataset", "rice-leaf-diseases")
+    # remake_directory = os.path.join(root_directory, "dataset", "remake")
     #
     # dataset = AgrismartDataset(original_directory, remake_directory, False)
     # dataset.validate()

@@ -1,7 +1,7 @@
 import os
 
 from core.helpers import LoggerHelper
-from vision.datasets import AgrismartOriginalDataset, AgrismartRemakeDataset, DatasetMode
+from vision.dataset import AgrismartOriginalDataset, AgrismartRemakeDataset, DatasetMode
 
 
 def statistics(**kwargs) -> None:
@@ -32,8 +32,8 @@ def statistics(**kwargs) -> None:
     ]
 
     if kwargs["dataset"] == "all":
-        original_directory = os.path.join(root_directory, "datasets", "rice-leaf-diseases")
-        remake_directory = os.path.join(root_directory, "datasets", "remake")
+        original_directory = os.path.join(root_directory, "dataset", "rice-leaf-diseases")
+        remake_directory = os.path.join(root_directory, "dataset", "remake")
 
         original_dataset = AgrismartOriginalDataset(directory=original_directory, classnames=original_classnames)
         remake_dataset = AgrismartRemakeDataset(directory=remake_directory, classnames=remake_classnames)
@@ -53,13 +53,13 @@ def statistics(**kwargs) -> None:
         return
 
     if kwargs["dataset"] == "original":
-        directory = os.path.join(root_directory, "datasets", "rice-leaf-diseases")
+        directory = os.path.join(root_directory, "dataset", "rice-leaf-diseases")
         if not os.path.exists(directory):
             raise FileNotFoundError(directory)
 
         dataset = AgrismartOriginalDataset(directory=directory, classnames=original_classnames)
     else:
-        directory = os.path.join(root_directory, "datasets", "remake")
+        directory = os.path.join(root_directory, "dataset", "remake")
         if not os.path.exists(directory):
             raise FileNotFoundError(directory)
 

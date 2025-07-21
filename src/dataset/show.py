@@ -1,7 +1,7 @@
 import os
 
 from core.helpers import LoggerHelper
-from vision.datasets import AgrismartOriginalDataset, DatasetMode, AgrismartRemakeDataset
+from vision.dataset import AgrismartOriginalDataset, DatasetMode, AgrismartRemakeDataset
 
 
 # uv run dataset --executor show --dataset remake --modes "train" --num 100

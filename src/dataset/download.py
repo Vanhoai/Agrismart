@@ -18,11 +18,11 @@ def download() -> None:
         LoggerHelper.print_full_width("END DOWNLOAD")
         return
 
-    os.makedirs("datasets/rice-leaf-disease", exist_ok=True)
+    os.makedirs("dataset/rice-leaf-disease", exist_ok=True)
 
     # 2. Change directory & download
     command = (
-        "cd datasets/rice-leaf-disease && "
+        "cd dataset/rice-leaf-disease && "
         "curl -L 'https://universe.roboflow.com/ds/wMunxiKjaW?key=<your-key>' -o roboflow.zip && "
         "unzip roboflow.zip && rm roboflow.zip"
     )

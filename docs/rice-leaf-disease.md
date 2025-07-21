@@ -24,7 +24,7 @@ if you want to download the dataset using a script, you can use the following co
 
 ```bash
 # 1. in root project directory
-mkdir datasets && cd datasets && mkdir rice-leaf-disease && cd rice-leaf-disease
+mkdir dataset && cd dataset && mkdir rice-leaf-disease && cd rice-leaf-disease
 
 # 2. download dataset
 curl -L "https://universe.roboflow.com/ds/wMunxiKjaW?key=<your-key>" > roboflow.zip; unzip roboflow.zip; rm roboflow.zip
