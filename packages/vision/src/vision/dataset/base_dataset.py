@@ -50,9 +50,9 @@ class AgrismartBaseDataset(ABC):
 
     @staticmethod
     def convert_polygon_to_bbox(
-            image: NDArray,
-            coordinates: NDArray[np.float32],
-            normalized: bool = True,
+        image: NDArray,
+        coordinates: NDArray[np.float32],
+        normalized: bool = True,
     ) -> Tuple[np.float32, np.float32, np.float32, np.float32]:
         """
         Convert polygon coordinates to bounding box format.
@@ -91,9 +91,9 @@ class AgrismartBaseDataset(ABC):
         return x_center, y_center, width, height
 
     def statistics(
-            self,
-            dataset: str,
-            mode: DatasetMode = DatasetMode.TRAIN,
+        self,
+        dataset: str,
+        mode: DatasetMode = DatasetMode.TRAIN,
     ) -> None:
         images_path = os.path.join(self.directory, mode.value, "images")
         labels_path = os.path.join(self.directory, mode.value, "labels")
@@ -160,9 +160,7 @@ class AgrismartBaseDataset(ABC):
             sum(stats["files"] for stats in objects.values()),
             sum(stats["bboxes"] for stats in objects.values()),
             sum(stats["polygon"] for stats in objects.values()),
-            sum(
-                stats["bboxes"] + stats["polygon"] for stats in objects.values()
-            ),
+            sum(stats["bboxes"] + stats["polygon"] for stats in objects.values()),
         ]
         table.append(row)
 
@@ -177,73 +175,16 @@ class AgrismartBaseDataset(ABC):
             f"Total images: {len(image_files)}, labels: {len(label_files)}, empty labels: {count_empty}"
         )
 
-        # import cv2
-        # import numpy as np
-        #
-        # # Read First Image
-        # img1 = cv2.imread('GFG.png')
-        #
-        # # Read Second Image
-        # img2 = cv2.imread('GFG.png')
-        #
-        # # concatenate image Horizontally
-        # Hori = np.concatenate((img1, img2), axis=1)
-        #
-        # # concatenate image Vertically
-        # Verti = np.concatenate((img1, img2), axis=0)
-        #
-        # cv2.imshow('HORIZONTAL', Hori)
-        # cv2.imshow('VERTICAL', Verti)
-        #
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-
-    def show_single_sample(
-            self,
-            image_file,
-            image,
-            label_file,
-            labels,
-    ):
-        drawing = Drawing(self.classnames)
-        for label in labels:
-            parts = label.strip().split()
-
-            if len(parts) < 5:
-                continue
-            elif len(parts) == 5:
-                # Bounding box format
-                class_id = int(parts[0])
-                x_center = float(parts[1])
-                y_center = float(parts[2])
-                width = float(parts[3])
-                height = float(parts[4])
-
-                image = drawing.draw_bounding_box(
-                    image, class_id, x_center, y_center, width, height
-                )
-            else:
-                class_id = int(parts[0])
-                coordinates = [float(coord) for coord in parts[1:]]
-
-                image = drawing.draw_polygon(image, class_id, coordinates)
-
-        cv2.imshow(f"Annotated: {image_file}", image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
     def show_sample(
-            self,
-            mode: DatasetMode = DatasetMode.TRAIN,
-            num_sample=None
-    ) -> None:
+        self,
+        mode: DatasetMode = DatasetMode.TRAIN,
+        num_sample=100,
+    ):
         images_path = os.path.join(self.directory, mode.value, "images")
         labels_path = os.path.join(self.directory, mode.value, "labels")
 
         if not os.path.exists(images_path) or not os.path.exists(labels_path):
-            raise FileNotFoundError(
-                f"Dataset directory for mode '{mode.value}' does not exist."
-            )
+            raise FileNotFoundError(f"Dataset directory does not exist.")
 
         image_files = os.listdir(images_path)
         label_files = os.listdir(labels_path)
@@ -278,14 +219,12 @@ class AgrismartBaseDataset(ABC):
                 skip_count += 1
                 continue
 
-            print(f"Processing image: {image_file}")
+            class_id = None
             for label in labels:
                 parts = label.strip().split()
 
                 if len(parts) < 5:
-                    print(
-                        f"Warning: label file '{label_file}' has invalid format. Skipping."
-                    )
+                    print(f"Warning: label file '{label_file}' has invalid format.")
                     skip_count += 1
                     continue
                 elif len(parts) == 5:
@@ -297,7 +236,12 @@ class AgrismartBaseDataset(ABC):
                     height = float(parts[4])
 
                     image = drawing.draw_bounding_box(
-                        image, class_id, x_center, y_center, width, height
+                        image,
+                        class_id,
+                        x_center,
+                        y_center,
+                        width,
+                        height,
                     )
                 else:
                     class_id = int(parts[0])
@@ -305,19 +249,21 @@ class AgrismartBaseDataset(ABC):
 
                     image = drawing.draw_polygon(image, class_id, coordinates)
 
-            # cv2.imshow(f"Annotated: {image_file}", image)
-            # cv2.waitKey(0)
-            # cv2.destroyAllWindows()
-            images_show.append({
-                "file": image_file,
-                "image": image
-            })
+            images_show.append(
+                {
+                    "file": image_file,
+                    "image": image,
+                    "class": (
+                        self.classnames[class_id] if class_id is not None else "Unknown"
+                    ),
+                }
+            )
 
         # Concatenate images horizontally 5 file and vertically 2 files
-        for i in range(0, 100, 10):
+        for i in range(0, num_sample, 10):
             if i + 10 <= len(images_show):
-                items1 = images_show[i:i + 5]
-                items2 = images_show[i + 5:i + 10]
+                items1 = images_show[i : i + 5]
+                items2 = images_show[i + 5 : i + 10]
 
                 row1 = [item["image"] for item in items1]
                 row2 = [item["image"] for item in items2]
@@ -328,9 +274,11 @@ class AgrismartBaseDataset(ABC):
 
                 for item in items1:
                     print(f"Image: {item['file']}")
+                    print(f"Class: {item['class']}\n")
 
                 for item in items2:
                     print(f"Image: {item['file']}")
+                    print(f"Class: {item['class']}\n")
 
                 cv2.imshow(f"Sample {i // 10 + 1}", combined_image)
                 cv2.waitKey(0)

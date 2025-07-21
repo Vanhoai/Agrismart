@@ -6,12 +6,16 @@ import numpy as np
 class Drawing:
     def __init__(self, class_names):
         self.class_names = class_names
+        # not use white
         self.class_colors = {
             0: (0, 255, 0),  # Green
             1: (0, 165, 255),  # Orange
             2: (0, 0, 255),  # Red
             3: (255, 0, 0),  # Blue
-            4: (255, 255, 0)  # Cyan
+            4: (255, 255, 0),  # Cyan
+            5: (255, 0, 255),  # Magenta
+            6: (128, 128, 128),  # Gray
+            7: (255, 128, 0),  # Light Orange
         }
 
     def draw_bounding_box(self, image, class_id, x_center, y_center, width, height):
@@ -37,7 +41,16 @@ class Drawing:
 
         # Draw class label
         class_name = self.class_names[class_id]
-        cv2.putText(image, class_name, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+        cv2.putText(
+            image,
+            class_name,
+            (x1, y1 - 10),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            color,
+            2,
+        )
+
         return image
 
     def draw_polygon(self, image, class_id, coords):
@@ -72,6 +85,14 @@ class Drawing:
             cx = int(M["m10"] / M["m00"])
             cy = int(M["m01"] / M["m00"])
             class_name = self.class_names[class_id]
-            cv2.putText(image, class_name, (cx - 20, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+            cv2.putText(
+                image,
+                class_name,
+                (cx - 20, cy),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                color,
+                2,
+            )
 
         return image

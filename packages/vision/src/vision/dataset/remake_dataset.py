@@ -22,6 +22,7 @@ from .base_dataset import AgrismartBaseDataset, DatasetMode
 # +-----------------------+-------+--------+----------+-------+
 # remake ignore healthy images -> 3850 - 584 = 3266
 
+
 class AgrismartRemakeDataset(AgrismartBaseDataset):
     def __init__(self, directory: str, classnames: List[str]) -> None:
         super().__init__(directory, classnames)
@@ -90,12 +91,18 @@ class AgrismartRemakeDataset(AgrismartBaseDataset):
                     print(f"Remaking image {image_file} with labels: {bboxes}")
 
                     cv2.imwrite(os.path.join(remake_images_path, image_file), image)
-                    with open(os.path.join(remake_labels_path, label_file), "w") as file:
+                    with open(
+                        os.path.join(remake_labels_path, label_file), "w"
+                    ) as file:
                         for bbox in bboxes:
                             if bbox[0] > 2:
-                                file.write(f"{bbox[0] - 1} {bbox[1]} {bbox[2]} {bbox[3]} {bbox[4]}\n")
+                                file.write(
+                                    f"{bbox[0] - 1} {bbox[1]} {bbox[2]} {bbox[3]} {bbox[4]}\n"
+                                )
                             else:
-                                file.write(f"{bbox[0]} {bbox[1]} {bbox[2]} {bbox[3]} {bbox[4]}\n")
+                                file.write(
+                                    f"{bbox[0]} {bbox[1]} {bbox[2]} {bbox[3]} {bbox[4]}\n"
+                                )
 
             print(f"Processed {count_process} images.")
             print(f"Skipped {count_healthy} healthy images.")

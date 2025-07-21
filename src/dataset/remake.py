@@ -1,25 +1,20 @@
 import os
 from core.helpers import LoggerHelper
 from vision.dataset import AgrismartRemakeDataset, AgrismartOriginalDataset
+from vision.constants import VisionConstants
 
-
-# uv run dataset --executor statistics --dataset original --modes "train valid test"
 # uv run dataset --executor remake
-
-# 584
 
 
 def remake(**kwargs) -> None:
     LoggerHelper.print_full_width("STARTING REMAKE")
 
-    root_directory = os.getcwd()
-    directory = os.path.join(root_directory, "dataset", "remake")
-    original_directory = os.path.join(root_directory, "dataset", "rice-leaf-diseases")
+    remake_directory = VisionConstants.REMAKE_DIRECTORY
+    original_directory = VisionConstants.ORIGINAL_DIRECTORY
 
-    classnames = [
+    remake_classnames = [
         "Bacterial Leaf Blight",
         "Brown Spot",
-        "Healthy",
         "Leaf Blast",
         "Leaf Blight",
         "Leaf Scald",
@@ -27,7 +22,7 @@ def remake(**kwargs) -> None:
         "Narrow Brown Spot",
     ]
 
-    dataset = AgrismartRemakeDataset(directory, classnames)
+    dataset = AgrismartRemakeDataset(remake_directory, remake_classnames)
     dataset.remake(original_directory)
 
     LoggerHelper.print_full_width("END REMAKE")

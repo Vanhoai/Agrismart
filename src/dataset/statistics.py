@@ -2,13 +2,16 @@ import os
 
 from core.helpers import LoggerHelper
 from vision.dataset import AgrismartOriginalDataset, AgrismartRemakeDataset, DatasetMode
+from vision.constants import VisionConstants
+
+# uv run dataset --executor statistics --dataset original --modes "train valid test"
+# uv run dataset --executor statistics --dataset original --modes "train"
+# uv run dataset --executor statistics --dataset remake --modes "train"
 
 
 def statistics(**kwargs) -> None:
     LoggerHelper.print_full_width("STARTING STATISTICS")
-
-    root_directory = os.getcwd()
-    modes = kwargs.get("modes", "train valid").split()
+    modes = kwargs.get("modes", "train valid test").split()
 
     original_classnames = [
         "Bacterial Leaf Blight",
@@ -32,17 +35,21 @@ def statistics(**kwargs) -> None:
     ]
 
     if kwargs["dataset"] == "all":
-        original_directory = os.path.join(root_directory, "dataset", "rice-leaf-diseases")
-        remake_directory = os.path.join(root_directory, "dataset", "remake")
+        original_dataset = AgrismartOriginalDataset(
+            directory=VisionConstants.ORIGINAL_DIRECTORY,
+            classnames=original_classnames,
+        )
 
-        original_dataset = AgrismartOriginalDataset(directory=original_directory, classnames=original_classnames)
-        remake_dataset = AgrismartRemakeDataset(directory=remake_directory, classnames=remake_classnames)
+        remake_dataset = AgrismartRemakeDataset(
+            directory=VisionConstants.REMAKE_DIRECTORY,
+            classnames=remake_classnames,
+        )
 
-        if not os.path.exists(remake_directory):
-            raise FileNotFoundError(remake_directory)
+        if not os.path.exists(VisionConstants.REMAKE_DIRECTORY):
+            raise FileNotFoundError(VisionConstants.REMAKE_DIRECTORY)
 
-        if not os.path.exists(original_directory):
-            raise FileNotFoundError(original_directory)
+        if not os.path.exists(VisionConstants.ORIGINAL_DIRECTORY):
+            raise FileNotFoundError(VisionConstants.ORIGINAL_DIRECTORY)
 
         for mode in modes:
             mode_enum = DatasetMode.from_string(mode)
@@ -53,17 +60,25 @@ def statistics(**kwargs) -> None:
         return
 
     if kwargs["dataset"] == "original":
-        directory = os.path.join(root_directory, "dataset", "rice-leaf-diseases")
+        directory = VisionConstants.ORIGINAL_DIRECTORY
+
         if not os.path.exists(directory):
             raise FileNotFoundError(directory)
 
-        dataset = AgrismartOriginalDataset(directory=directory, classnames=original_classnames)
+        dataset = AgrismartOriginalDataset(
+            directory=directory,
+            classnames=original_classnames,
+        )
     else:
-        directory = os.path.join(root_directory, "dataset", "remake")
+        directory = VisionConstants.REMAKE_DIRECTORY
+
         if not os.path.exists(directory):
             raise FileNotFoundError(directory)
 
-        dataset = AgrismartRemakeDataset(directory=directory, classnames=remake_classnames)
+        dataset = AgrismartRemakeDataset(
+            directory=directory,
+            classnames=remake_classnames,
+        )
 
     for mode in modes:
         mode_enum = DatasetMode.from_string(mode)

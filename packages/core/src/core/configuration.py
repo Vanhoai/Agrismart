@@ -8,6 +8,9 @@ class Configuration(BaseSettings):
     # database
     URI: str
 
+    # roboflow
+    ROBOFLOW_KEY: str
+
     # supabase
     SUPABASE_URL: str
     SUPABASE_KEY: str

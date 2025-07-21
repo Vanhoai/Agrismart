@@ -2,18 +2,17 @@ import os
 
 from core.helpers import LoggerHelper
 from vision.dataset import AgrismartOriginalDataset, DatasetMode, AgrismartRemakeDataset
-
+from vision.constants import VisionConstants
 
 # uv run dataset --executor show --dataset remake --modes "train" --num 100
+# uv run dataset --executor show --dataset original --modes "train" --num 100
+
 
 def show(**kwargs) -> None:
-    LoggerHelper.print_full_width("STARTING SHOW")
-
     if kwargs["dataset"] == "all":
-        raise ValueError("Option 'all' is not supported for show command. Please use 'original' or 'remake'.")
+        raise ValueError("Option 'all' is not supported for show command.")
 
-    root_directory = os.getcwd()
-
+    LoggerHelper.print_full_width("STARTING SHOW")
     dataset = None
     if kwargs["dataset"] == "original":
         classnames = [
@@ -26,7 +25,7 @@ def show(**kwargs) -> None:
             "Leaf Smut",
             "Narrow Brown Spot",
         ]
-        dataset_directory = os.path.join(root_directory, "datasets", "rice-leaf-diseases")
+        dataset_directory = VisionConstants.ORIGINAL_DIRECTORY
         dataset = AgrismartOriginalDataset(dataset_directory, classnames)
 
     elif kwargs["dataset"] == "remake":
@@ -39,13 +38,13 @@ def show(**kwargs) -> None:
             "Leaf Smut",
             "Narrow Brown Spot",
         ]
-        dataset_directory = os.path.join(root_directory, "datasets", "remake")
+        dataset_directory = VisionConstants.REMAKE_DIRECTORY
         dataset = AgrismartRemakeDataset(dataset_directory, classnames)
 
     modes = kwargs["modes"].split()
     if len(modes) > 1:
-        raise ValueError("Multiple modes are not supported for show command. Please use a single mode.")
+        raise ValueError("Multiple modes are not supported for show command.")
 
     mode = DatasetMode.from_string(modes[0])
-    dataset.show_sample(mode, num_sample=kwargs["num"])
+    dataset.show_sample(mode, num_sample=kwargs.get("num", 100))  # type: ignore
     LoggerHelper.print_full_width("END SHOW")
