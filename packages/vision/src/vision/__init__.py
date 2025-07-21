@@ -1,3 +1,3 @@
-from .datasets import AgrismartDataset
+from . import datasets, functions
 
-__all__ = ["AgrismartDataset"]
+__all__ = ["datasets", "functions"]

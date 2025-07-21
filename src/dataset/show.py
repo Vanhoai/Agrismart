@@ -1,9 +1,51 @@
+import os
+
+from core.helpers import LoggerHelper
+from vision.datasets import AgrismartOriginalDataset, DatasetMode, AgrismartRemakeDataset
+
+
+# uv run dataset --executor show --dataset remake --modes "train" --num 100
+
 def show(**kwargs) -> None:
-    """
-    Show the dataset information.
-    """
-    print("Dataset information:")
-    print("This is a placeholder for dataset information.")
-    # Here you can add logic to display actual dataset information
-    # For example, you could read from a configuration file or database
-    # and print relevant details about the dataset.
+    LoggerHelper.print_full_width("STARTING SHOW")
+
+    if kwargs["dataset"] == "all":
+        raise ValueError("Option 'all' is not supported for show command. Please use 'original' or 'remake'.")
+
+    root_directory = os.getcwd()
+
+    dataset = None
+    if kwargs["dataset"] == "original":
+        classnames = [
+            "Bacterial Leaf Blight",
+            "Brown Spot",
+            "Healthy",
+            "Leaf Blast",
+            "Leaf Blight",
+            "Leaf Scald",
+            "Leaf Smut",
+            "Narrow Brown Spot",
+        ]
+        dataset_directory = os.path.join(root_directory, "datasets", "rice-leaf-diseases")
+        dataset = AgrismartOriginalDataset(dataset_directory, classnames)
+
+    elif kwargs["dataset"] == "remake":
+        classnames = [
+            "Bacterial Leaf Blight",
+            "Brown Spot",
+            "Leaf Blast",
+            "Leaf Blight",
+            "Leaf Scald",
+            "Leaf Smut",
+            "Narrow Brown Spot",
+        ]
+        dataset_directory = os.path.join(root_directory, "datasets", "remake")
+        dataset = AgrismartRemakeDataset(dataset_directory, classnames)
+
+    modes = kwargs["modes"].split()
+    if len(modes) > 1:
+        raise ValueError("Multiple modes are not supported for show command. Please use a single mode.")
+
+    mode = DatasetMode.from_string(modes[0])
+    dataset.show_sample(mode, num_sample=kwargs["num"])
+    LoggerHelper.print_full_width("END SHOW")

@@ -10,10 +10,11 @@ benchmark:
 training:
 	uv run training
 
-# Dataset commands
-# 1. Download the dataset
-# uv run dataset download
-# 2. Remake the dataset
-# uv run dataset remake
-# 3. Statistics of the dataset
-# uv run dataset statistics --set train
+# Download the dataset
+# uv run dataset --executor download
+
+# Statistics of the dataset
+# uv run dataset --executor statistics --dataset original --mode train
+
+# Remake dataset
+# uv run dataset --executor remake

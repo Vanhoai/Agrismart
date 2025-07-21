@@ -2,15 +2,16 @@ import cv2
 import os
 import numpy as np
 
+
 class Drawing:
     def __init__(self, class_names):
         self.class_names = class_names
         self.class_colors = {
-            0: (0, 255, 0),    # Green
+            0: (0, 255, 0),  # Green
             1: (0, 165, 255),  # Orange
-            2: (0, 0, 255),    # Red
-            3: (255, 0, 0),    # Blue
-            4: (255, 255, 0)   # Cyan
+            2: (0, 0, 255),  # Red
+            3: (255, 0, 0),  # Blue
+            4: (255, 255, 0)  # Cyan
         }
 
     def draw_bounding_box(self, image, class_id, x_center, y_center, width, height):
@@ -38,12 +39,14 @@ class Drawing:
         class_name = self.class_names[class_id]
         cv2.putText(image, class_name, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
         return image
-    
+
     def draw_polygon(self, image, class_id, coords):
         h, w = image.shape[:2]
 
         # Convert normalized coordinates to pixel coordinates
         points = []
+
+        # noinspection PyTypeChecker
         for i in range(0, len(coords), 2):
             x_px = int(coords[i] * w)
             y_px = int(coords[i + 1] * h)

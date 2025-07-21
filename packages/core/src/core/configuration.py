@@ -1,9 +1,9 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Configuration(BaseSettings):
     # app - [DEVELOPMENT, PRODUCTION]
     MODE: str
-
 
     # database
     URI: str
@@ -21,5 +21,6 @@ class Configuration(BaseSettings):
         super().__init__(**kwargs)
 
     model_config = SettingsConfigDict(env_file=".env", extra="forbid")
+
 
 config = Configuration()

@@ -1,7 +1,6 @@
 import os
 import cv2
 import numpy as np
-from vision import AgrismartDataset
 
 root_directory = os.getcwd()
 
@@ -134,9 +133,10 @@ root_directory = os.getcwd()
 # cv2.destroyAllWindows()
 
 def main() -> None:
-    original_directory = os.path.join(root_directory, "datasets", "rice-leaf-diseases")
-    remake_directory = os.path.join(root_directory, "datasets", "remake")
-
-    dataset = AgrismartDataset(original_directory, remake_directory, False)
-    dataset.validate()
+    # original_directory = os.path.join(root_directory, "datasets", "rice-leaf-diseases")
+    # remake_directory = os.path.join(root_directory, "datasets", "remake")
+    #
+    # dataset = AgrismartDataset(original_directory, remake_directory, False)
+    # dataset.validate()
     # dataset.validate("remake")
+    pass
