@@ -2,7 +2,8 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi_camelcase import CamelModel
-from core import TimeHelper
+from core.helpers import TimeHelper
+
 
 class BaseEntity(CamelModel):
     id: Optional[str]

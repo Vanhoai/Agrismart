@@ -1,7 +1,8 @@
-from core import database, CollectionName
+from core.database import database, CollectionName
 
 from domain.entities import RoleEntity
 from domain.repositories.base_repository import BaseRepository
+
 
 class RoleRepository(BaseRepository[RoleEntity]):
     def __init__(self):

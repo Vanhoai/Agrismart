@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from core import HttpResponse, ExceptionHandler, ErrorCodes
+from core.base import HttpResponse
+from core.exceptions import ExceptionHandler, ErrorCodes
 from domain.usecases import SignInRequest
 from domain.services import AuthService
 
@@ -13,10 +14,11 @@ router = APIRouter(
     tags=["auth"],
 )
 
+
 @router.post("/oauth")
 async def oauth(
-    body: SignInRequest,
-    auth_service: AuthService = Depends(dependencies.auth_service),
+        body: SignInRequest,
+        auth_service: AuthService = Depends(dependencies.auth_service),
 ):
     try:
         sign_in_response = await auth_service.sign_in(body)
