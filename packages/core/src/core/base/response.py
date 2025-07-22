@@ -4,10 +4,12 @@ from fastapi_camelcase import CamelModel
 PAGE = 1
 PAGE_SIZE = 30
 
+
 class HttpResponse(CamelModel):
     status_code: int
     message: str
     data: Any = None
+
 
 class Meta(CamelModel):
     page: int

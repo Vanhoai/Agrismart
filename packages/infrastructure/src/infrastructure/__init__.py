@@ -1,2 +1,3 @@
-def main() -> None:
-    print("Hello from infrastructure!")
+from . import apis
+
+__all__ = ["apis"]

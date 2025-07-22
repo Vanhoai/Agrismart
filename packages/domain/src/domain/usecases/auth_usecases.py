@@ -1,14 +1,21 @@
 from abc import ABC, abstractmethod
 from fastapi_camelcase import CamelModel
 
-class SignInRequest(CamelModel):
+
+class OAuthRequest(CamelModel):
     id_token: str
+    raw_nonce: str
     device_token: str
 
-class SignInResponse(CamelModel):
+
+class OAuthResponse(CamelModel):
     access_token: str
     refresh_token: str
 
+
 class AuthUseCase(ABC):
     @abstractmethod
-    async def sign_in(self, req: SignInRequest) -> SignInResponse: ...
+    async def oauth(self, req: OAuthRequest) -> OAuthResponse: ...
+
+    @abstractmethod
+    async def face_auth(self): ...

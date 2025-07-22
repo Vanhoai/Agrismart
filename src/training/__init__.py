@@ -132,6 +132,7 @@ root_directory = os.getcwd()
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
 
+
 def main() -> None:
     # original_directory = os.path.join(root_directory, "dataset", "rice-leaf-diseases")
     # remake_directory = os.path.join(root_directory, "dataset", "remake")

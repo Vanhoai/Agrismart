@@ -1,8 +1,7 @@
-from .auth_usecases import AuthUseCase, SignInRequest, SignInResponse
+from .auth_usecases import AuthUseCase, OAuthRequest, OAuthResponse
 
 __all__ = [
-    # auth use cases
     "AuthUseCase",
-    "SignInRequest",
-    "SignInResponse",
+    "OAuthRequest",
+    "OAuthResponse",
 ]
