@@ -1,5 +1,6 @@
 from enum import Enum
 
+from core.helpers import TimeHelper
 from domain.entities import BaseEntity
 
 
@@ -14,10 +15,20 @@ class NotificationEntity(BaseEntity):
     ref_type: str
     content: str
 
-
-def __init__(self, account_id: str, ref_id: str, ref_type: NotificationType, content: str):
-    super().__init__()
-    self.account_id = account_id
-    self.ref_id = ref_id
-    self.type = ref_type.value
-    self.content = content
+    @staticmethod
+    def create(
+        account_id: str,
+        ref_id: str,
+        ref_type: NotificationType,
+        content: str,
+    ) -> "NotificationEntity":
+        return NotificationEntity(
+            _id=None,
+            account_id=account_id,
+            ref_id=ref_id,
+            ref_type=ref_type.value,
+            content=content,
+            created_at=TimeHelper.vn_timezone(),
+            updated_at=TimeHelper.vn_timezone(),
+            deleted_at=None,
+        )

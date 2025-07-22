@@ -1,5 +1,6 @@
 from enum import Enum
 
+from core.helpers import TimeHelper
 from domain.entities import BaseEntity
 
 
@@ -13,7 +14,13 @@ class RoleEntity(BaseEntity):
     account_id: str
     role: int
 
-    def __init__(self, account_id: str, role: EnumRole = EnumRole.FARMER):
-        super().__init__()
-        self.account_id = account_id
-        self.role = role.value
+    @staticmethod
+    def create(account_id: str, role: EnumRole) -> "RoleEntity":
+        return RoleEntity(
+            _id=None,
+            account_id=account_id,
+            role=role.value,
+            created_at=TimeHelper.vn_timezone(),
+            updated_at=TimeHelper.vn_timezone(),
+            deleted_at=None,
+        )

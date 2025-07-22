@@ -10,14 +10,13 @@ from agrismart.routers.v2.routes import router as v2
 
 from agrismart.dependencies import build_config
 
-# init application
 app = FastAPI()
+origins = [str(origin) for origin in build_config().CORS_ALLOWED_ORIGINS.split(",")]
 
-# middlewares
 # noinspection PyTypeChecker
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[str(origin) for origin in build_config().CORS_ALLOWED_ORIGINS.split(",")],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

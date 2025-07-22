@@ -1,4 +1,5 @@
 from domain.entities import BaseEntity
+from core.helpers import TimeHelper
 
 
 class SubmissionEntity(BaseEntity):
@@ -7,9 +8,20 @@ class SubmissionEntity(BaseEntity):
     image_url: str
     confidence: float
 
-    def __init__(self, account_id: str, disease_id: str, image_url: str, confidence: float):
-        super().__init__()
-        self.account_id = account_id
-        self.disease_id = disease_id
-        self.image_url = image_url
-        self.confidence = confidence
+    @staticmethod
+    def create(
+        account_id: str,
+        disease_id: str,
+        image_url: str,
+        confidence: float = 0.0,
+    ) -> "SubmissionEntity":
+        return SubmissionEntity(
+            _id=None,
+            account_id=account_id,
+            disease_id=disease_id,
+            image_url=image_url,
+            confidence=confidence,
+            created_at=TimeHelper.vn_timezone(),
+            updated_at=TimeHelper.vn_timezone(),
+            deleted_at=None,
+        )

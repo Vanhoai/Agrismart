@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi_camelcase import CamelModel
-from core.helpers import TimeHelper
 
 
 class BaseEntity(CamelModel):

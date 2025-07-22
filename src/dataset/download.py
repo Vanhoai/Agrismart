@@ -3,7 +3,7 @@ import subprocess
 
 from vision.constants import VisionConstants
 from core.helpers import LoggerHelper
-from core.configuration import config
+from core.configuration import Configuration
 
 
 def download() -> None:
@@ -18,6 +18,7 @@ def download() -> None:
     Note:
         Make sure to replace `<your-key>` with your actual Roboflow API key in the `.env` file.
     """
+    config = Configuration()
     LoggerHelper.print_full_width("STARTING DOWNLOAD")
     print("Please ensure you replace <your-key> with your actual Roboflow API key.")
 

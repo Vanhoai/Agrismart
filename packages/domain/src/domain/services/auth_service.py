@@ -24,9 +24,8 @@ class AuthService(AuthUseCase):
         )
 
         account = await self.account_repository.find_by_email(user_supabase.email)
-
-        # if account not found -> create new account
         if account:
+            # FIXME: Update device token
             return account
 
         account_entity = AccountEntity.create(
@@ -36,8 +35,7 @@ class AuthService(AuthUseCase):
             device_token=req.device_token,
         )
 
-        account = await self.account_repository.create(account_entity)
-        return account
+        return await self.account_repository.create(account_entity)
 
     async def face_auth(self):
         pass

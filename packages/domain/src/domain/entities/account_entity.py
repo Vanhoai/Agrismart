@@ -9,12 +9,7 @@ class AccountEntity(BaseEntity):
     device_token: str
 
     @staticmethod
-    def create(
-        username: str,
-        email: str,
-        avatar: str,
-        device_token: str,
-    ) -> "AccountEntity":
+    def create(username: str, email: str, avatar: str, device_token: str):
         return AccountEntity(
             _id=None,
             username=username,
