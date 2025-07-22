@@ -1,7 +1,6 @@
-from .auth_usecases import AuthUseCase, OAuthRequest, OAuthResponse
+from .auth_usecases import AuthUseCase, OAuthRequest
 
 __all__ = [
     "AuthUseCase",
     "OAuthRequest",
-    "OAuthResponse",
 ]

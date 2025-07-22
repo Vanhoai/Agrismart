@@ -1,4 +1,4 @@
-from pydantic import EmailStr
+from core.helpers import TimeHelper
 from .base_entity import BaseEntity
 
 
@@ -8,23 +8,20 @@ class AccountEntity(BaseEntity):
     avatar: str
     device_token: str
 
-    def __init__(self, username: str, email: str, avatar: str, device_token: str):
-        super().__init__()
-        self.username = username
-        self.email = email
-        self.avatar = avatar
-        self.device_token = device_token
-
     @staticmethod
     def create(
         username: str,
-        email: EmailStr,
+        email: str,
         avatar: str,
         device_token: str,
     ) -> "AccountEntity":
         return AccountEntity(
+            _id=None,
             username=username,
-            email=str(email),
+            email=email,
             avatar=avatar,
             device_token=device_token,
+            created_at=TimeHelper.vn_timezone(),
+            updated_at=TimeHelper.vn_timezone(),
+            deleted_at=None,
         )

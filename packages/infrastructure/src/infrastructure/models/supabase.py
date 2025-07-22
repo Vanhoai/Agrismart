@@ -6,12 +6,12 @@ class UserSupabaseMetadata:
     picture: str
 
     def __init__(
-            self,
-            avatar_url: str = "",
-            email: str = "",
-            full_name: str = "",
-            name: str = "",
-            picture: str = "",
+        self,
+        avatar_url: str = "",
+        email: str = "",
+        full_name: str = "",
+        name: str = "",
+        picture: str = "",
     ):
         self.avatar_url = avatar_url
         self.email = email
@@ -26,7 +26,7 @@ class UserSupabaseMetadata:
             email=json.get("email", ""),
             full_name=json.get("full_name", ""),
             name=json.get("name", ""),
-            picture=json.get("picture", "")
+            picture=json.get("picture", ""),
         )
 
     def __str__(self):

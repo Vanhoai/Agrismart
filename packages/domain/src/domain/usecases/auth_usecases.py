@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from fastapi_camelcase import CamelModel
+from domain.entities import AccountEntity
 
 
 class OAuthRequest(CamelModel):
@@ -8,14 +9,9 @@ class OAuthRequest(CamelModel):
     device_token: str
 
 
-class OAuthResponse(CamelModel):
-    access_token: str
-    refresh_token: str
-
-
 class AuthUseCase(ABC):
     @abstractmethod
-    async def oauth(self, req: OAuthRequest) -> OAuthResponse: ...
+    async def oauth(self, req: OAuthRequest) -> AccountEntity: ...
 
     @abstractmethod
     async def face_auth(self): ...

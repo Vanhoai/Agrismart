@@ -17,15 +17,15 @@ router = APIRouter(
 
 @router.post("/oauth")
 async def oauth(
-        body: OAuthRequest,
-        auth_service: AuthService = Depends(dependencies.build_auth_service),
+    body: OAuthRequest,
+    auth_service: AuthService = Depends(dependencies.build_auth_service),
 ):
     try:
-        oauth_response = await auth_service.oauth(body)
+        account = await auth_service.oauth(body)
         http_response = HttpResponse(
-            status_code=status.HTTP_201_CREATED,
-            message="success",
-            data=oauth_response,
+            status_code=status.HTTP_200_OK,
+            message="OAuth successfully ✅",
+            data=account,
         )
 
         return JSONResponse(content=jsonable_encoder(http_response))

@@ -19,7 +19,13 @@ class AccountRepository(BaseRepository[AccountEntity]):
 
     async def create(self, entity: AccountEntity) -> AccountEntity:
         entity_dict = entity.model_dump(exclude_unset=True)
-        result = await self.collection.insert_one(entity_dict)
-        entity.id = str(result.inserted_id)
+        print(f"Creating account with data: {entity_dict}")
 
+        result = await self.collection.insert_one(entity_dict)
+        print(f"Insert result: {result}")
+
+        entity._id = str(result.inserted_id)
+
+        print(f"Account created with ID: {entity._id}")
+        print(f"Account entity: {entity}")
         return entity
