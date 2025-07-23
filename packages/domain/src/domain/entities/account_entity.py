@@ -1,3 +1,6 @@
+from bson import ObjectId
+from typing import Dict, Any
+
 from core.helpers import TimeHelper
 from .base_entity import BaseEntity
 
@@ -11,7 +14,6 @@ class AccountEntity(BaseEntity):
     @staticmethod
     def create(username: str, email: str, avatar: str, device_token: str):
         return AccountEntity(
-            _id=None,
             username=username,
             email=email,
             avatar=avatar,

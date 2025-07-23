@@ -1,6 +1,9 @@
 from fastapi import Depends
 
-from domain.usecases import AuthUseCase, OAuthRequest
+from core.secures import Jwt, JwtPayload, KeyType
+from core.helpers import TimeHelper
+
+from domain.usecases import AuthUseCase, OAuthRequest, OAuthResponse
 from domain.repositories import AccountRepository
 from domain.entities import AccountEntity
 
@@ -13,20 +16,37 @@ class AuthService(AuthUseCase):
         self,
         account_repository: AccountRepository = Depends(),
         supabase: Supabase = Depends(),
+        jwt: Jwt = Depends(),
     ):
         self.account_repository = account_repository
         self.supabase = supabase
+        self.jwt = jwt
 
-    async def oauth(self, req: OAuthRequest) -> AccountEntity:
+    async def oauth(self, req: OAuthRequest) -> OAuthResponse:
         user_supabase: UserSupabaseMetadata = self.supabase.sign_in_google(
             req.id_token,
             req.raw_nonce,
         )
 
-        account = await self.account_repository.find_by_email(user_supabase.email)
+        account = await self.account_repository.find_one({"email": user_supabase.email})
         if account:
-            # FIXME: Update device token
-            return account
+            timestamp = TimeHelper.vn_timezone().timestamp()
+            exp = int(timestamp + 1 * 60 * 60)  # Example expiration time of 1 hour
+            iat = int(timestamp)
+
+            payload: JwtPayload = JwtPayload(
+                iss="agrismart",
+                aud="agrismart",
+                exp=exp,
+                iat=iat,
+                id=str(account.id),
+                email=account.email,
+                device_token=req.device_token,
+            )
+
+            access_token = self.jwt.encode(payload, KeyType.ACCESS)
+            refresh_token = self.jwt.encode(payload, KeyType.REFRESH)
+            return OAuthResponse(access_token=access_token, refresh_token=refresh_token)
 
         account_entity = AccountEntity.create(
             username=user_supabase.name,
@@ -35,7 +55,12 @@ class AuthService(AuthUseCase):
             device_token=req.device_token,
         )
 
-        return await self.account_repository.create(account_entity)
+        account = await self.account_repository.create(account_entity)
+
+        return OAuthResponse(
+            access_token="dummy_access_token",
+            refresh_token="dummy_refresh_token",
+        )
 
     async def face_auth(self):
         pass

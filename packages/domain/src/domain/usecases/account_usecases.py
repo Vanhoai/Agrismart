@@ -14,3 +14,6 @@ class ManageAccountUseCase(ABC):
         self,
         query: FindAccountsQuery,
     ) -> Tuple[List[AccountEntity], Meta]: ...
+
+    @abstractmethod
+    async def find_by_id(self, id: str) -> AccountEntity: ...

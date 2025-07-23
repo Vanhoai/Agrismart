@@ -1,5 +1,6 @@
 import os
 import asyncio
+from loguru import logger
 from pymongo.asynchronous.collection import AsyncCollection
 from domain.entities import AccountEntity
 
@@ -20,7 +21,7 @@ class AccountAugmenter:
         """
         num_accounts = await self.collection.count_documents({})
         if num_accounts >= self.NUM_REQUIRED_ACCOUNTS:
-            print(f"Num account already reached: {num_accounts}, no need to augment.")
+            logger.info(f"Already have {num_accounts} accounts, no need to augment ✅")
             return
 
         accounts = []
@@ -30,12 +31,12 @@ class AccountAugmenter:
                 parts = line.strip().split(",")
                 [username, email, avatar] = parts
                 if username == "username" or email == "email" or avatar == "avatar":
-                    print("Skipping header line.")
+                    logger.warning("Skipping header line in CSV")
                     continue
 
                 accounts.append((username, email, avatar))
 
-        print(f"Number of accounts to insert: {len(accounts)}")
+        logger.info(f"Number of accounts to insert: {len(accounts)}")
         start_time = asyncio.get_event_loop().time()
         tasks = []
         for username, email, avatar in accounts:
@@ -43,10 +44,10 @@ class AccountAugmenter:
 
         entities = await asyncio.gather(*tasks)
         for entity in entities:
-            print(f"Inserted account: {entity.username} with ID: {entity._id}")
+            logger.info(f"Inserted account: {entity.username} with ID: {entity.id}")
 
         end_time = asyncio.get_event_loop().time()
-        print(f"Time taken to insert accounts: {end_time - start_time:.2f} seconds")
+        logger.info(f"Time taken to insert accounts: {end_time - start_time:.2f} seconds")
         # Time taken to insert accounts: 31.92 seconds
 
     async def insert(self, username: str, email: str, avatar: str) -> AccountEntity:
@@ -60,5 +61,5 @@ class AccountAugmenter:
 
         entity_dict = entity.model_dump(exclude_unset=True)
         result = await self.collection.insert_one(entity_dict)
-        entity._id = str(result.inserted_id)
+        entity.id = str(result.inserted_id)
         return entity

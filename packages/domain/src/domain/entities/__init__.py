@@ -1,6 +1,6 @@
 from .account_entity import AccountEntity
 from .base_entity import BaseEntity
-from .role_entity import RoleEntity
+from .role_entity import RoleEntity, EnumRole
 from .disease_entity import DiseaseEntity
 from .notification_entity import NotificationEntity
 from .submission_entity import SubmissionEntity

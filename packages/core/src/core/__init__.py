@@ -1,9 +1,3 @@
-from . import helpers, configuration, database, base, exceptions
+from . import helpers, configuration, database, base, exceptions, secures
 
-__all__ = [
-    "configuration",
-    "helpers",
-    "database",
-    "base",
-    "exceptions",
-]
+__all__ = ["configuration", "helpers", "database", "base", "exceptions", "secures"]

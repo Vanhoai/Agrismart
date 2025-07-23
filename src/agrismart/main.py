@@ -1,24 +1,31 @@
 import os
 from fastapi import FastAPI
-from starlette.middleware.cors import CORSMiddleware
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
+from starlette.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from core.exceptions import ExceptionHandler
-
-from infrastructure.augmenters import Augmenter
+from core.secures import Cryptography, KeyBackend
 
 from agrismart.routers.v1.routes import router as v1
 from agrismart.routers.v2.routes import router as v2
-
+from agrismart.middlewares import RateLimitingMiddleware, TracingMiddleware
 from agrismart.dependencies import build_config, augmenter_monitor
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_: FastAPI):
     # Startup tasks
     await augmenter_monitor()
+
+    # Initialize cryptography
+    directory = os.path.join(os.getcwd(), "keys")
+
+    # don't override existing keys
+    # don't caching keys because it is not needed in this context
+    cryptography = Cryptography(directory, KeyBackend.EC, is_override=False, is_caching=False)
+    cryptography.generate()
     yield
     # Clean up
 
@@ -36,6 +43,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(TracingMiddleware)
+app.add_middleware(RateLimitingMiddleware)
+
 app.include_router(v1, prefix="/api/v1")
 app.include_router(v2, prefix="/api/v2")
 
@@ -43,6 +53,8 @@ app.include_router(v2, prefix="/api/v2")
 # exception
 @app.exception_handler(ExceptionHandler)
 async def exception_handler(_: Request, exc: ExceptionHandler):
+    print(f"Exception: {exc}")
+
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={

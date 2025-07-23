@@ -9,9 +9,14 @@ class OAuthRequest(CamelModel):
     device_token: str
 
 
+class OAuthResponse(CamelModel):
+    access_token: str
+    refresh_token: str
+
+
 class AuthUseCase(ABC):
     @abstractmethod
-    async def oauth(self, req: OAuthRequest) -> AccountEntity: ...
+    async def oauth(self, req: OAuthRequest) -> OAuthResponse: ...
 
     @abstractmethod
     async def face_auth(self): ...

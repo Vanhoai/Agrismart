@@ -3,9 +3,10 @@ from fastapi import Depends
 
 from core.configuration import Configuration
 from core.database import Database, CollectionName
+from core.secures import Cryptography, KeyBackend, Jwt
 
 from domain.repositories import AccountRepository, RoleRepository
-from domain.services import AuthService, AccountService
+from domain.services import AuthService, AccountService, RoleService
 
 from infrastructure.apis import Supabase
 from infrastructure.augmenters import Augmenter
@@ -13,6 +14,17 @@ from infrastructure.augmenters import Augmenter
 
 def build_config() -> Configuration:
     return Configuration()
+
+
+def build_cryptography() -> Cryptography:
+    directory = os.path.join(os.getcwd(), "keys")
+    cryptography = Cryptography(directory, KeyBackend.EC, is_override=False, is_caching=True)
+    cryptography.generate()
+    return cryptography
+
+
+def build_jwt(cryptography: Cryptography = Depends(build_cryptography)):
+    return Jwt(cryptography)
 
 
 def build_supabase(config: Configuration = Depends(build_config)) -> Supabase:
@@ -46,11 +58,19 @@ def role_repository(database: Database = Depends(build_database)) -> RoleReposit
 def build_auth_service(
     account_repository: AccountRepository = Depends(build_account_repository),
     supabase: Supabase = Depends(build_supabase),
+    jwt: Jwt = Depends(build_jwt),
 ) -> AuthService:
-    return AuthService(account_repository, supabase)
+    return AuthService(account_repository, supabase, jwt)
 
 
 def build_account_service(
     account_repository: AccountRepository = Depends(build_account_repository),
 ) -> AccountService:
     return AccountService(account_repository)
+
+
+def build_role_service(
+    role_repository: RoleRepository = Depends(role_repository),
+    account_repository: AccountRepository = Depends(build_account_repository),
+) -> RoleService:
+    return RoleService(role_repository, account_repository)
