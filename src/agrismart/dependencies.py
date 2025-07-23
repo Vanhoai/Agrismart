@@ -1,3 +1,4 @@
+import os
 from fastapi import Depends
 
 from core.configuration import Configuration
@@ -7,6 +8,7 @@ from domain.repositories import AccountRepository, RoleRepository
 from domain.services import AuthService, AccountService
 
 from infrastructure.apis import Supabase
+from infrastructure.augmenters import Augmenter
 
 
 def build_config() -> Configuration:
@@ -19,6 +21,14 @@ def build_supabase(config: Configuration = Depends(build_config)) -> Supabase:
 
 def build_database(config: Configuration = Depends(build_config)) -> Database:
     return Database(config)
+
+
+async def augmenter_monitor():
+    config = build_config()
+    database = build_database(config)
+    csv_directory = os.path.join(os.getcwd(), "datasets", "databases")
+    augmenter = Augmenter(csv_directory, database)
+    await augmenter.monitor()
 
 
 def build_account_repository(

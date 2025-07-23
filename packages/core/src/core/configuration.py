@@ -6,7 +6,9 @@ class Configuration(BaseSettings):
     MODE: str
 
     # database
-    URI: str
+    LOCAL_URI: str
+    REMOTE_URI: str
+    IS_LOCAL: bool
 
     # roboflow
     ROBOFLOW_KEY: str

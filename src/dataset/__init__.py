@@ -48,7 +48,5 @@ def main() -> None:
         case "show":
             show(dataset=args.dataset, modes=args.modes, num=args.num)
         case _:
-            print(
-                "Please choose a available mode: download, remake, statistics, or show."
-            )
+            print("Please choose a available mode.")
             sys.exit(1)

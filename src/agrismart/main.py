@@ -1,16 +1,30 @@
+import os
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
+from contextlib import asynccontextmanager
 
 from core.exceptions import ExceptionHandler
+
+from infrastructure.augmenters import Augmenter
 
 from agrismart.routers.v1.routes import router as v1
 from agrismart.routers.v2.routes import router as v2
 
-from agrismart.dependencies import build_config
+from agrismart.dependencies import build_config, augmenter_monitor
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup tasks
+    await augmenter_monitor()
+    yield
+    # Clean up
+
+
+app = FastAPI(lifespan=lifespan)
+
 origins = [str(origin) for origin in build_config().CORS_ALLOWED_ORIGINS.split(",")]
 
 # noinspection PyTypeChecker

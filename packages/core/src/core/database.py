@@ -10,11 +10,14 @@ class CollectionName(str, Enum):
     ROLES = "roles"
     SUBMISSIONS = "submissions"
     POSTS = "posts"
+    DISEASES = "diseases"
+    NOTIFICATIONS = "notifications"
 
 
 class Database:
     def __init__(self, config: Configuration):
-        self.client = AsyncMongoClient(config.URI)
+        URI = config.LOCAL_URI if config.IS_LOCAL else config.REMOTE_URI
+        self.client = AsyncMongoClient(URI)
         self.db = self.client.agrismart  # name of the database
 
     def ping(self):
