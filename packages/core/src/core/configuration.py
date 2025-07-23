@@ -22,6 +22,11 @@ class Configuration(BaseSettings):
     CORS_ALLOWED_ORIGINS: str
     MAX_AGE: int = 3600
 
+    # cloudinary
+    CLOUDINARY_CLOUD_NAME: str
+    CLOUDINARY_API_KEY: str
+    CLOUDINARY_API_SECRET: str
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

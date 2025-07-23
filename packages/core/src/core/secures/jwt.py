@@ -9,7 +9,7 @@ class JwtPayload(CamelModel):
 
     # FIXME: When add aud -> Invalid audience when decode
     iss: str  # Issuer
-    aud: str  # Audience
+    # aud: str  # Audience
     exp: int  # Expiration time
     iat: int  # Issued at time
 
@@ -39,6 +39,4 @@ class Jwt:
     def decode(self, token: str, key_type: KeyType) -> JwtPayload:
         public_key = self.cryptography.load_key(key_type, is_public=True)
         payload = jwt.decode(token, public_key, algorithms=[self.algorithm])
-
-        print(f"Decoded payload: {payload}")
         return JwtPayload(**payload)

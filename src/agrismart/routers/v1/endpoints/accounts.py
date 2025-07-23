@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 
 
 from agrismart.dependencies import build_account_service
-from agrismart.middlewares import auth_middleware
+from agrismart.middlewares import auth_middleware, role_middleware
 
 from domain.usecases import FindAccountsQuery
 from domain.services import AccountService
@@ -24,11 +24,10 @@ router = APIRouter(
 async def find_accounts(
     query: Annotated[FindAccountsQuery, Query()],
     claims: JwtPayload = Depends(auth_middleware.func),
+    passed=Depends(role_middleware.func(required=[])),
     account_service: AccountService = Depends(build_account_service),
 ):
     try:
-        print(f"Claims: {claims}")
-
         accounts, meta = await account_service.find_accounts(query)
         response = HttpPaginationResponse(
             status_code=status.HTTP_200_OK,
@@ -45,6 +44,8 @@ async def find_accounts(
 @router.get("/{id}")
 async def get_account(
     id: str,
+    claims: JwtPayload = Depends(auth_middleware.func),
+    passed: bool = Depends(role_middleware.func(required=[])),
     account_service: AccountService = Depends(build_account_service),
 ):
     try:

@@ -6,9 +6,9 @@ from core.database import Database, CollectionName
 from core.secures import Cryptography, KeyBackend, Jwt
 
 from domain.repositories import AccountRepository, RoleRepository
-from domain.services import AuthService, AccountService, RoleService
+from domain.services import AuthService, AccountService, RoleService, MediaService
 
-from infrastructure.apis import Supabase
+from infrastructure.apis import Supabase, Cloudinary
 from infrastructure.augmenters import Augmenter
 
 
@@ -44,33 +44,37 @@ async def augmenter_monitor():
 
 
 def build_account_repository(
-    database: Database = Depends(build_database),
+        database: Database = Depends(build_database),
 ) -> AccountRepository:
     collection = database.get_collection(CollectionName.ACCOUNTS)
     return AccountRepository(collection)
 
 
-def role_repository(database: Database = Depends(build_database)) -> RoleRepository:
+def build_role_repository(database: Database = Depends(build_database)) -> RoleRepository:
     collection = database.get_collection(CollectionName.ROLES)
     return RoleRepository(collection)
 
 
 def build_auth_service(
-    account_repository: AccountRepository = Depends(build_account_repository),
-    supabase: Supabase = Depends(build_supabase),
-    jwt: Jwt = Depends(build_jwt),
+        account_repository: AccountRepository = Depends(build_account_repository),
+        supabase: Supabase = Depends(build_supabase),
+        jwt: Jwt = Depends(build_jwt),
 ) -> AuthService:
     return AuthService(account_repository, supabase, jwt)
 
 
 def build_account_service(
-    account_repository: AccountRepository = Depends(build_account_repository),
+        account_repository: AccountRepository = Depends(build_account_repository),
 ) -> AccountService:
     return AccountService(account_repository)
 
 
 def build_role_service(
-    role_repository: RoleRepository = Depends(role_repository),
-    account_repository: AccountRepository = Depends(build_account_repository),
+        role_repository: RoleRepository = Depends(build_role_repository),
+        account_repository: AccountRepository = Depends(build_account_repository),
 ) -> RoleService:
     return RoleService(role_repository, account_repository)
+
+
+def build_media_service() -> MediaService:
+    return MediaService()

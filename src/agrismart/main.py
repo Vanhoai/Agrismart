@@ -1,4 +1,5 @@
 import os
+import cloudinary
 from fastapi import FastAPI
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
@@ -12,10 +13,13 @@ from agrismart.routers.v1.routes import router as v1
 from agrismart.routers.v2.routes import router as v2
 from agrismart.middlewares import RateLimitingMiddleware, TracingMiddleware
 from agrismart.dependencies import build_config, augmenter_monitor
+from infrastructure.apis import Cloudinary
+
+config = build_config()
 
 
 @asynccontextmanager
-async def lifespan(_: FastAPI):
+async def lifespan(app: FastAPI):
     # Startup tasks
     await augmenter_monitor()
 
@@ -26,13 +30,16 @@ async def lifespan(_: FastAPI):
     # don't caching keys because it is not needed in this context
     cryptography = Cryptography(directory, KeyBackend.EC, is_override=False, is_caching=False)
     cryptography.generate()
+
+    Cloudinary.setup(config)
     yield
     # Clean up
 
 
 app = FastAPI(lifespan=lifespan)
 
-origins = [str(origin) for origin in build_config().CORS_ALLOWED_ORIGINS.split(",")]
+# Initialize CORS middleware
+origins = [str(origin) for origin in config.CORS_ALLOWED_ORIGINS.split(",")]
 
 # noinspection PyTypeChecker
 app.add_middleware(
