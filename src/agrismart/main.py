@@ -1,38 +1,65 @@
 import os
+import asyncio
 from fastapi import FastAPI
 from fastapi import Request, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from core.exceptions import ExceptionHandler
+from core.configuration import Configuration
+from core.exceptions import ErrorCodes, ExceptionHandler
 from core.secures import Cryptography, KeyBackend
+from infrastructure.apis import Cloudinary
+from infrastructure.queues import start_consumer, RabbitMQConnection
 
 from agrismart.routers.v1.routes import router as v1
 from agrismart.routers.v2.routes import router as v2
 from agrismart.middlewares import RateLimitingMiddleware, TracingMiddleware
-from agrismart.dependencies import build_config, augmenter_monitor
+from agrismart.dependencies import augmenter_monitor
 
 
 @asynccontextmanager
-async def lifespan(_: FastAPI):
-    # Startup tasks
-    await augmenter_monitor()
+async def lifespan(app: FastAPI):
 
-    # Initialize cryptography
+    # Startup
+    config = Configuration()
+    await augmenter_monitor(config)
+
+    # Create shared instances
     directory = os.path.join(os.getcwd(), "keys")
-
-    # don't override existing keys
-    # don't caching keys because it is not needed in this context
-    cryptography = Cryptography(directory, KeyBackend.EC, is_override=False, is_caching=False)
+    cryptography = Cryptography(directory, KeyBackend.EC, is_override=False, is_caching=True)
     cryptography.generate()
+
+    queue = RabbitMQConnection(config.RABBITMQ_BROKER_URL)
+    await queue.connect()
+    consumer_task = await start_consumer(queue)
+
+    # Store in app state
+    app.state.config = config
+    app.state.queue = queue
+    app.state.cryptography = cryptography
+
+    # Initialize external services
+    Cloudinary.setup(config)
+
     yield
-    # Clean up
+
+    # Shutdown
+    consumer_task.cancel()
+    try:
+        await consumer_task
+    except asyncio.CancelledError:
+        pass
+
+    await app.state.queue.disconnect()
 
 
 app = FastAPI(lifespan=lifespan)
 
-origins = [str(origin) for origin in build_config().CORS_ALLOWED_ORIGINS.split(",")]
+# Initialize CORS middleware
+config = Configuration()
+origins = [str(origin) for origin in config.CORS_ALLOWED_ORIGINS.split(",")]
 
 # noinspection PyTypeChecker
 app.add_middleware(
@@ -65,3 +92,8 @@ async def exception_handler(_: Request, exc: ExceptionHandler):
         media_type="application/json",
         # write log here
     )
+
+
+@app.exception_handler(RequestValidationError)
+async def custom_request_validation_exception_handler(_: Request, exc: RequestValidationError):
+    raise ExceptionHandler(code=ErrorCodes.BAD_REQUEST, msg=str(exc))

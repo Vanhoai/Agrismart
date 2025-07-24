@@ -2,6 +2,7 @@ from fastapi import Depends, Request
 
 from core.secures import Jwt, JwtPayload, KeyType
 from core.exceptions import ErrorCodes, ExceptionHandler
+from domain.entities import AccountEntity
 from domain.services import AccountService
 
 from agrismart.dependencies import build_account_service, build_jwt
@@ -21,11 +22,15 @@ async def func(
     req: Request,
     jwt: Jwt = Depends(build_jwt),
     account_service: AccountService = Depends(build_account_service),
-) -> JwtPayload:
+) -> AccountEntity:
     try:
         claims = await required_authentication(req, jwt)
+        account = await account_service.find_by_id(claims.id)
 
-        req.state.account = {}
-        return claims
+        if not account:
+            raise ExceptionHandler(code=ErrorCodes.UNAUTHORIZED, msg="Account not found in database 🐔")
+
+        req.state.account = account
+        return account
     except Exception as exception:
         raise ExceptionHandler(code=ErrorCodes.UNAUTHORIZED, msg=str(exception))

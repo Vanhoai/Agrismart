@@ -26,6 +26,22 @@ services:
         volumes:
             - redis_data:/data
 
+    queue:
+        container_name: queue
+        image: rabbitmq:management
+        restart: always
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+        environment:
+            RABBITMQ_DEFAULT_USER: hinsun
+            RABBITMQ_DEFAULT_PASS: hinsun
+        healthcheck:
+            test: ["CMD", "rabbitmqctl", "status"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
 volumes:
     mongo_data:
     redis_data:

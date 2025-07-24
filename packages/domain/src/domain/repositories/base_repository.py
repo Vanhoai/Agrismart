@@ -3,6 +3,7 @@ from typing import Generic, Type, TypeVar, Optional, List, Tuple, Literal
 from pymongo import ASCENDING, DESCENDING
 from pymongo.asynchronous.collection import AsyncCollection
 
+from core.base import Meta
 from domain.entities import BaseEntity
 
 T = TypeVar("T", bound=BaseEntity)
@@ -30,7 +31,10 @@ class BaseRepository(Generic[T]):
 
         return None
 
-    async def find(self, query: dict = {}) -> list[T]:
+    async def find(self, query=None) -> list[T]:
+        if query is None:
+            query = {}
+
         cursor = self.collection.find(query)
         docs = await cursor.to_list(length=None)
         return [self.convert_doc_to_entity(doc) for doc in docs]
@@ -49,13 +53,35 @@ class BaseRepository(Generic[T]):
 
     async def paginated(
         self,
-        query: dict = {},
-        skip: int = 0,
-        limit: int = 10,
+        query=None,
+        page: int = 1,
+        page_size: int = 20,
         order: str = "asc",
         order_by: str = "created_at",
-    ) -> Tuple[List[T], int]:
-        cursor = self.collection.find(query).skip(skip).limit(limit).sort(order_by, ASCENDING if order == "asc" else DESCENDING)
+    ) -> Tuple[List[T], Meta]:
+        if query is None:
+            query = {}
+
+        skip = (page - 1) * page_size
+        limit = page_size
+
+        cursor = (
+            self.collection.find(query)
+            .skip(skip)
+            .limit(limit)
+            .sort(order_by, ASCENDING if order == "asc" else DESCENDING)
+        )
+
         docs = await cursor.to_list(length=None)
         total = await self.collection.count_documents(query)
-        return [self.convert_doc_to_entity(doc) for doc in docs], total
+
+        total_page = (total // page_size) + (1 if total % page_size > 0 else 0)
+
+        meta = Meta(
+            page=page,
+            page_size=page_size,
+            total_record=total,
+            total_page=total_page,
+        )
+
+        return [self.convert_doc_to_entity(doc) for doc in docs], meta

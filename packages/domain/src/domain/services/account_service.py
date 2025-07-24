@@ -21,9 +21,6 @@ class AccountService(ManageAccountUseCase):
         self,
         query: FindAccountsQuery,
     ) -> Tuple[List[AccountEntity], Meta]:
-        skip = (query.page - 1) * query.page_size
-        limit = query.page_size
-
         query_dict = {
             "email": {
                 "$regex": query.search,
@@ -31,21 +28,12 @@ class AccountService(ManageAccountUseCase):
             },
         }
 
-        accounts, records = await self.account_repository.paginated(
+        accounts, meta = await self.account_repository.paginated(
             query_dict,
-            skip=skip,
-            limit=limit,
-            order=query.order,
-            order_by=query.order_by,
-        )
-
-        total_page = (records // query.page_size) + (1 if records % query.page_size > 0 else 0)
-
-        meta = Meta(
             page=query.page,
             page_size=query.page_size,
-            total_record=records,
-            total_page=total_page,
+            order=query.order,
+            order_by=query.order_by,
         )
 
         return accounts, meta

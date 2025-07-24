@@ -22,6 +22,7 @@ class AuthService(AuthUseCase):
         self.supabase = supabase
         self.jwt = jwt
 
+    # FIXME: update device token and rehandle logic this function
     async def oauth(self, req: OAuthRequest) -> OAuthResponse:
         user_supabase: UserSupabaseMetadata = self.supabase.sign_in_google(
             req.id_token,
@@ -31,12 +32,11 @@ class AuthService(AuthUseCase):
         account = await self.account_repository.find_one({"email": user_supabase.email})
         if account:
             timestamp = TimeHelper.vn_timezone().timestamp()
-            exp = int(timestamp + 1 * 60 * 60)  # Example expiration time of 1 hour
+            exp = int(timestamp + 2 * 60 * 60)  # Example expiration time of 1 hour
             iat = int(timestamp)
 
             payload: JwtPayload = JwtPayload(
                 iss="agrismart",
-                aud="agrismart",
                 exp=exp,
                 iat=iat,
                 id=str(account.id),
