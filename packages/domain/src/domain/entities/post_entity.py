@@ -8,7 +8,7 @@ class PostEntity(BaseEntity):
     account_id: str
     image_url: str
     title: str
-    caption: List[str]
+    captions: List[str]
     tags: List[str]
     viewer: int
     favorite: int
@@ -18,15 +18,14 @@ class PostEntity(BaseEntity):
         account_id: str,
         image_url: str,
         title: str,
-        caption: List[str],
+        captions: List[str],
         tags: List[str],
     ) -> "PostEntity":
         return PostEntity(
-            _id=None,
             account_id=account_id,
             image_url=image_url,
             title=title,
-            caption=caption,
+            captions=captions,
             tags=tags,
             viewer=0,
             favorite=0,

@@ -66,7 +66,10 @@ class PostAugmenter(Augmentation[PostEntity]):
     def provide_accounts(self, accounts: List[str]) -> None:
         self.accounts = accounts
 
-    async def insert_one(self, attrs: List[str] = []) -> Optional[PostEntity]:
+    async def insert_one(self, attrs=None) -> Optional[PostEntity]:
+        if attrs is None:
+            attrs = []
+
         [title, image_url] = attrs
         if not self.accounts:
             return None
@@ -77,14 +80,14 @@ class PostAugmenter(Augmentation[PostEntity]):
         # random 3 - 5 tags from tags
 
         account_id = random.choice(self.accounts)
-        caption = random.sample(content, k=random.randint(2, 3))
+        captions = random.sample(content, k=random.randint(2, 3))
         selected_tags = random.sample(tags, k=random.randint(3, 5))
 
         entity = PostEntity.create(
             account_id=account_id,
             image_url=image_url,
             title=title,
-            caption=caption,
+            captions=captions,
             tags=selected_tags,
         )
 

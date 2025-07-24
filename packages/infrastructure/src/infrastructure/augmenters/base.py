@@ -22,10 +22,10 @@ class Augmentation(Generic[T], ABC):
     }
 
     def __init__(
-        self,
-        csv: str,
-        collection: AsyncCollection,
-        collection_name: CollectionName,
+            self,
+            csv: str,
+            collection: AsyncCollection,
+            collection_name: CollectionName,
     ) -> None:
         if not os.path.exists(csv):
             raise FileNotFoundError(f"CSV file {csv} does not exist.")
@@ -47,10 +47,10 @@ class Augmentation(Generic[T], ABC):
         return entity
 
     async def monitor(self) -> None:
-        NUM_REQUIRED = self.NUM_COLLECTION_REQUIRED.get(self.collection_name, 0)
+        num_required = self.NUM_COLLECTION_REQUIRED.get(self.collection_name, 0)
         num_documents = await self.collection.count_documents({})
 
-        if num_documents >= NUM_REQUIRED:
+        if num_documents >= num_required:
             logger.info(f"Already have {num_documents} documents in {self.collection_name}, no need to augment ✅")
             return
 
@@ -64,12 +64,13 @@ class Augmentation(Generic[T], ABC):
         with open(self.csv, "r") as file:
             data = file.readlines()
 
+            # noinspection PyTypeChecker
             for i in range(len(data)):
                 if i == 0:
                     continue
 
-                if num_documents + count >= NUM_REQUIRED:
-                    logger.info(f"Reached required number of documents: {NUM_REQUIRED}, stopping augmentation.")
+                if num_documents + count >= num_required:
+                    logger.info(f"Reached required number of documents: {num_required}, stopping augmentation.")
                     break
 
                 line = data[i].strip()
@@ -94,7 +95,9 @@ class Augmentation(Generic[T], ABC):
         logger.info(f"Time taken to insert entities: {end_time - start_time:.2f} seconds")
 
     @abstractmethod
-    async def insert_one(self, attrs: List[str] = []) -> Optional[T]: ...
+    async def insert_one(self, attrs=None) -> Optional[T]:
+        ...
 
     @abstractmethod
-    def process_line(self, line: str) -> List[str]: ...
+    def process_line(self, line: str) -> List[str]:
+        ...

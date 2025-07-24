@@ -31,7 +31,10 @@ class BaseRepository(Generic[T]):
 
         return None
 
-    async def find(self, query: dict = {}) -> list[T]:
+    async def find(self, query=None) -> list[T]:
+        if query is None:
+            query = {}
+
         cursor = self.collection.find(query)
         docs = await cursor.to_list(length=None)
         return [self.convert_doc_to_entity(doc) for doc in docs]
@@ -50,12 +53,15 @@ class BaseRepository(Generic[T]):
 
     async def paginated(
         self,
-        query: dict = {},
+        query=None,
         page: int = 1,
         page_size: int = 20,
         order: str = "asc",
         order_by: str = "created_at",
     ) -> Tuple[List[T], Meta]:
+        if query is None:
+            query = {}
+
         skip = (page - 1) * page_size
         limit = page_size
 

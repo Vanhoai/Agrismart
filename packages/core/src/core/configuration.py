@@ -27,6 +27,9 @@ class Configuration(BaseSettings):
     CLOUDINARY_API_KEY: str
     CLOUDINARY_API_SECRET: str
 
+    # queue
+    RABBITMQ_BROKER_URL: str
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
