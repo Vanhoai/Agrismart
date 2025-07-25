@@ -1,5 +1,4 @@
 import os
-import asyncio
 from fastapi import FastAPI
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
@@ -11,7 +10,7 @@ from core.configuration import Configuration
 from core.exceptions import ErrorCodes, ExceptionHandler
 from core.secures import Cryptography, KeyBackend
 from infrastructure.apis import Cloudinary
-from infrastructure.queues import start_consumer, RabbitMQConnection
+from infrastructure.queues import RabbitMQConnection
 
 from agrismart.routers.v1.routes import router as v1
 from agrismart.routers.v2.routes import router as v2
@@ -28,12 +27,18 @@ async def lifespan(app: FastAPI):
 
     # Create shared instances
     directory = os.path.join(os.getcwd(), "keys")
-    cryptography = Cryptography(directory, KeyBackend.EC, is_override=False, is_caching=True)
+    cryptography = Cryptography(
+        directory,
+        KeyBackend.from_string(config.CRYPTO_BACKEND),
+        is_override=False,
+        is_caching=True,
+    )
     cryptography.generate()
 
+    # Initialize RabbitMQ connection
     queue = RabbitMQConnection(config.RABBITMQ_BROKER_URL)
     await queue.connect()
-    consumer_task = await start_consumer(queue)
+    await queue.start_all_consumers()
 
     # Store in app state
     app.state.config = config
@@ -46,12 +51,7 @@ async def lifespan(app: FastAPI):
     yield
 
     # Shutdown
-    consumer_task.cancel()
-    try:
-        await consumer_task
-    except asyncio.CancelledError:
-        pass
-
+    await queue.stop_all_consumers()
     await app.state.queue.disconnect()
 
 
@@ -77,11 +77,15 @@ app.include_router(v1, prefix="/api/v1")
 app.include_router(v2, prefix="/api/v2")
 
 
-# exception
+# Custom exception handlers when validation fails
+@app.exception_handler(RequestValidationError)
+async def custom_request_validation_exception_handler(_: Request, exc: RequestValidationError):
+    raise ExceptionHandler(code=ErrorCodes.BAD_REQUEST, msg=str(exc))
+
+
+# Custom exception handler for general exceptions
 @app.exception_handler(ExceptionHandler)
 async def exception_handler(_: Request, exc: ExceptionHandler):
-    print(f"Exception: {exc}")
-
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={
@@ -92,8 +96,3 @@ async def exception_handler(_: Request, exc: ExceptionHandler):
         media_type="application/json",
         # write log here
     )
-
-
-@app.exception_handler(RequestValidationError)
-async def custom_request_validation_exception_handler(_: Request, exc: RequestValidationError):
-    raise ExceptionHandler(code=ErrorCodes.BAD_REQUEST, msg=str(exc))

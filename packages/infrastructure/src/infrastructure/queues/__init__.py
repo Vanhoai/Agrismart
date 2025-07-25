@@ -1,3 +1,3 @@
-from .rabbitmq import RabbitMQConnection, start_consumer
+from .rabbitmq import RabbitMQConnection
 
-__all__ = ["RabbitMQConnection", "start_consumer"]
+__all__ = ["RabbitMQConnection"]

@@ -1,9 +1,14 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from core.secures import KeyBackend
+
 
 class Configuration(BaseSettings):
     # app - [DEVELOPMENT, PRODUCTION]
     MODE: str
+    CRYPTO_BACKEND: str = KeyBackend.EC.value
+    CORS_ALLOWED_ORIGINS: str
+    MAX_AGE: int = 3600
 
     # database
     LOCAL_URI: str
@@ -17,10 +22,6 @@ class Configuration(BaseSettings):
     SUPABASE_URL: str
     SUPABASE_KEY: str
     SUPABASE_PASSWORD: str
-
-    # cors
-    CORS_ALLOWED_ORIGINS: str
-    MAX_AGE: int = 3600
 
     # cloudinary
     CLOUDINARY_CLOUD_NAME: str

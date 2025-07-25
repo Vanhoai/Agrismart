@@ -13,12 +13,10 @@ from infrastructure.apis import Supabase
 from infrastructure.augmenters import Augmenter
 from infrastructure.queues import RabbitMQConnection
 
-
 # Global instances
 # _config = Configuration()
 # _cryptography = None
 # _rabbitmq_connection = None
-
 
 # @lru_cache()
 # def build_config() -> Configuration:
@@ -27,14 +25,12 @@ from infrastructure.queues import RabbitMQConnection
 #         _config = Configuration()
 #     return _config
 
-
 # @lru_cache()
 # def build_rabbitmq_connection() -> RabbitMQConnection:
 #     global _rabbitmq_connection
 #     if _rabbitmq_connection is None:
 #         _rabbitmq_connection = RabbitMQConnection(config.RABBITMQ_BROKER_URL)
 #     return _rabbitmq_connection
-
 
 # @lru_cache()
 # def build_cryptography() -> Cryptography:

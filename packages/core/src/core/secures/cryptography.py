@@ -9,8 +9,17 @@ from cryptography.hazmat.backends import default_backend
 
 
 class KeyBackend(Enum):
-    RSA = "rsa"
     EC = "ec"
+    RSA = "rsa"
+
+    @staticmethod
+    def from_string(value: str) -> "KeyBackend":
+        if value.upper() == "ELLIPTIC_CURVE":
+            return KeyBackend.EC
+        elif value.upper() == "RSA":
+            return KeyBackend.RSA
+        else:
+            raise ValueError(f"Unsupported key backend: {value}")
 
 
 class KeyType(Enum):
