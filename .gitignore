@@ -211,3 +211,4 @@ saved
 *.pte
 *.pth
 *.torchscript
+*.pt

@@ -1,9 +1,26 @@
 import asyncio
+from tabulate import tabulate
+from typing import List, Callable
 from loguru import logger
 from aio_pika import connect_robust, Message
-from aio_pika.abc import AbstractRobustConnection, AbstractRobustChannel, AbstractIncomingMessage
+from aio_pika.abc import AbstractRobustConnection, AbstractRobustChannel
 
-from .consumers import push_notification
+from .consumers import notification_consumer, submission_consumer
+
+PARALLEL_TASKS = 10
+
+QUEUE_CONFIG = {
+    "notifications": {
+        "name": "agrismart.notifications",
+        "handler": notification_consumer,
+        "auto_delete": True,
+    },
+    "submissions": {
+        "name": "agrismart.submissions",
+        "handler": submission_consumer,
+        "auto_delete": True,
+    },
+}
 
 
 class RabbitMQConnection:
@@ -11,6 +28,7 @@ class RabbitMQConnection:
         self.uri = uri
         self.connection: AbstractRobustConnection | None = None
         self.channel: AbstractRobustChannel | None = None
+        self.consumer_tasks: List[asyncio.Task] = []
 
     async def _clear(self) -> None:
         if self.channel and not self.channel.is_closed:
@@ -64,28 +82,62 @@ class RabbitMQConnection:
                     routing_key=routing_key,
                 )
 
+    async def start_consumer(self, queue_name: str, handler: Callable, auto_delete: bool) -> asyncio.Task:
+        async def _consume():
+            if not self.connection or self.connection.is_closed:
+                return
 
-PARALLEL_TASKS = 10
-NOTIFICATION_QUEUE = "agrismart.notifications"
+            channel = await self.connection.channel()
+            await channel.set_qos(prefetch_count=PARALLEL_TASKS)
+            queue = await channel.declare_queue(queue_name, auto_delete=auto_delete)
 
+            logger.info(f"Started consuming from {queue_name} 👀")
+            await queue.consume(handler)
 
-async def start_consumer(queue_connection: RabbitMQConnection) -> asyncio.Task:
-    async def _consume():
-        connection = queue_connection.connection  # Reuse connection
-        if not connection or connection.is_closed:
-            return
+            try:
+                await asyncio.Future()
+            except asyncio.CancelledError:
+                await channel.close()
+                logger.info(f"Stopped consuming from {queue_name} 👋🏻")
+                raise
 
-        channel = await connection.channel()
-        await channel.set_qos(prefetch_count=PARALLEL_TASKS)
-        queue = await channel.declare_queue(NOTIFICATION_QUEUE, auto_delete=True)
+        return asyncio.create_task(_consume())
 
-        logger.info(f"Started consuming from {NOTIFICATION_QUEUE} 👀")
-        await queue.consume(push_notification)
+    async def start_all_consumers(self) -> List[asyncio.Task]:
+        consumer_tasks = []
 
-        try:
-            await asyncio.Future()
-        except asyncio.CancelledError:
-            await channel.close()
-            raise
+        for queue_config in QUEUE_CONFIG.values():
+            if queue_config["handler"]:
+                task = await self.start_consumer(
+                    queue_config["name"],
+                    queue_config["handler"],
+                    queue_config["auto_delete"],
+                )
 
-    return asyncio.create_task(_consume())
+                consumer_tasks.append(task)
+
+        table = []
+        for queue_name, config in QUEUE_CONFIG.items():
+            row = [queue_name, config["handler"].__name__, config["auto_delete"]]
+            table.append(row)
+
+        print(
+            tabulate(
+                table,
+                headers=["Queue Name", "Handler", "Auto Delete"],
+                tablefmt="pretty",
+            )
+        )
+
+        self.consumer_tasks = consumer_tasks
+        return consumer_tasks
+
+    async def stop_all_consumers(self):
+        for task in self.consumer_tasks:
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+
+        self.consumer_tasks.clear()
