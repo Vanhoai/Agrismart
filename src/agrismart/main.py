@@ -35,6 +35,7 @@ async def lifespan(app: FastAPI):
     )
     cryptography.generate()
 
+    # Initialize RabbitMQ connection
     queue = RabbitMQConnection(config.RABBITMQ_BROKER_URL)
     await queue.connect()
     await queue.start_all_consumers()
