@@ -11,6 +11,11 @@ class CreateRoleRequest(CamelModel):
     role: EnumRole
 
 
+class UpdateRoleRequest(CamelModel):
+    account_id: str
+    role: EnumRole
+
+
 class FindRolesQuery(BaseQuery):
     pass
 
@@ -21,6 +26,12 @@ class ManageRoleUseCase(ABC):
 
     @abstractmethod
     async def create_role(self, request: CreateRoleRequest) -> RoleEntity: ...
+
+    @abstractmethod
+    async def update_role(self, request: UpdateRoleRequest) -> RoleEntity: ...
+
+    @abstractmethod
+    async def delete_role(self, role_id: str) -> RoleEntity: ...
 
     @abstractmethod
     async def find_role_by_account_id(self, account_id: str) -> RoleEntity: ...

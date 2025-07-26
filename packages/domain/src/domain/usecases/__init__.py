@@ -1,6 +1,6 @@
-from .auth_usecases import AuthUseCase, OAuthRequest, OAuthResponse
-from .account_usecases import ManageAccountUseCase, FindAccountsQuery
-from .role_usecases import ManageRoleUseCase, CreateRoleRequest, FindRolesQuery
+from .auth_usecases import AuthUseCase, OAuthRequest, AuthResponse, SignInWithEmailRequest
+from .account_usecases import ManageAccountUseCase, FindAccountsQuery, CreateAccountRequest
+from .role_usecases import ManageRoleUseCase, CreateRoleRequest, FindRolesQuery, UpdateRoleRequest
 from .media_usecases import UploadMediaUseCase, UploadMediaRequest
 from .notification_usecases import PushNotificationUseCase
 from .post_usecases import ManagePostUseCase, CreatePostRequest
@@ -9,14 +9,17 @@ __all__ = [
     # auth
     "AuthUseCase",
     "OAuthRequest",
-    "OAuthResponse",
+    "AuthResponse",
+    "SignInWithEmailRequest",
     # account
     "ManageAccountUseCase",
     "FindAccountsQuery",
+    "CreateAccountRequest",
     # role
     "ManageRoleUseCase",
     "CreateRoleRequest",
     "FindRolesQuery",
+    "UpdateRoleRequest",
     # media
     "UploadMediaUseCase",
     "UploadMediaRequest",

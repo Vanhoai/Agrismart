@@ -8,6 +8,13 @@ class FindAccountsQuery(BaseQuery):
     pass
 
 
+class CreateAccountRequest(BaseQuery):
+    username: str
+    email: str
+    avatar: str
+    device_token: str
+
+
 class ManageAccountUseCase(ABC):
     @abstractmethod
     async def find_accounts(
@@ -17,3 +24,6 @@ class ManageAccountUseCase(ABC):
 
     @abstractmethod
     async def find_by_id(self, id: str) -> AccountEntity: ...
+
+    @abstractmethod
+    async def create_account(self, req: CreateAccountRequest) -> AccountEntity: ...

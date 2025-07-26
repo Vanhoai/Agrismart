@@ -15,7 +15,10 @@ class AccountAugmenter(Augmentation[AccountEntity]):
     ) -> None:
         super().__init__(csv, collection, collection_name)
 
-    async def insert_one(self, attrs: List[str] = []) -> Optional[AccountEntity]:
+    async def insert_one(self, attrs=None) -> Optional[AccountEntity]:
+        if attrs is None:
+            attrs = []
+
         [username, email, avatar] = attrs
         device_token = "bGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI3MzE0MzU2NjE0ODctbX"
         entity = AccountEntity.create(
