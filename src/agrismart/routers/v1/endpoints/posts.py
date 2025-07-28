@@ -15,7 +15,7 @@ from agrismart.middlewares import auth_middleware, role_middleware
 
 router = APIRouter(
     prefix="/posts",
-    tags=["posts"],
+    tags=["Posts"],
 )
 
 

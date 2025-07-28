@@ -4,6 +4,7 @@ from .role_usecases import ManageRoleUseCase, CreateRoleRequest, FindRolesQuery,
 from .media_usecases import UploadMediaUseCase, UploadMediaRequest
 from .notification_usecases import PushNotificationUseCase
 from .post_usecases import ManagePostUseCase, CreatePostRequest
+from .diagnostic_usecases import GradingDiagnosticUseCase
 
 __all__ = [
     # auth
@@ -28,4 +29,6 @@ __all__ = [
     # post
     "ManagePostUseCase",
     "CreatePostRequest",
+    # diagnostic
+    "GradingDiagnosticUseCase",
 ]

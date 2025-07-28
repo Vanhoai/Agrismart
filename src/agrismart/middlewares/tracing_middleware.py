@@ -21,7 +21,9 @@ class TracingMiddleware(BaseHTTPMiddleware):
         response = await call_next(request)
         process_time = time.perf_counter() - start_time
 
-        logger.info(f"✅ [Response] IP: {client_ip}, Method: {method}, URL: {url}, User-Agent: {user_agent}, Process Time: {process_time:.4f}s")
+        logger.info(
+            f"✅ [Response] IP: {client_ip}, Method: {method}, URL: {url}, User-Agent: {user_agent}, Process Time: {process_time:.4f}s"
+        )
 
         response.headers["X-Process-Time"] = str(process_time)
         return response

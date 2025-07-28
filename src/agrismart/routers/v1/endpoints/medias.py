@@ -17,7 +17,7 @@ from agrismart.decorators import exception_decorator
 
 router = APIRouter(
     prefix="/medias",
-    tags=["medias"],
+    tags=["Medias"],
 )
 
 

@@ -16,7 +16,7 @@ from agrismart.decorators import exception_decorator
 
 router = APIRouter(
     prefix="/roles",
-    tags=["roles"],
+    tags=["Roles"],
 )
 
 

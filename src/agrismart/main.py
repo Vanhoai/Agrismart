@@ -1,6 +1,5 @@
 import os
-from fastapi import FastAPI, Depends
-from typing import Annotated
+from fastapi import FastAPI
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -17,8 +16,6 @@ from agrismart.routers.v1.routes import router as v1
 from agrismart.routers.v2.routes import router as v2
 from agrismart.middlewares import RateLimitingMiddleware, TracingMiddleware
 from agrismart.dependencies import augmenter_monitor
-
-from fastapi.security import OAuth2AuthorizationCodeBearer, OAuth2PasswordBearer
 
 
 @asynccontextmanager
@@ -59,15 +56,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-
-from fastapi.security import HTTPBearer
-
-auth = HTTPBearer()
-
-
-@app.get("/items/")
-async def read_items(token: Annotated[str, Depends(auth)]):
-    return {"token": token}
 
 
 # Initialize CORS middleware

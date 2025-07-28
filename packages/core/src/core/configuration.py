@@ -31,6 +31,9 @@ class Configuration(BaseSettings):
     # queue
     RABBITMQ_BROKER_URL: str
 
+    # google
+    GEMINI_API_KEY: str
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

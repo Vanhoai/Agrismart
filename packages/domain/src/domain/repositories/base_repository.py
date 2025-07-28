@@ -1,6 +1,6 @@
 import asyncio
 from bson import ObjectId
-from typing import Generic, Type, TypeVar, Optional, List, Tuple, Literal
+from typing import Generic, Type, TypeVar, Optional, List, Tuple
 from pymongo import ASCENDING, DESCENDING
 from pymongo.asynchronous.collection import AsyncCollection
 

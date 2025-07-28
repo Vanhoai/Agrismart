@@ -11,7 +11,7 @@ from agrismart.decorators import exception_decorator
 
 router = APIRouter(
     prefix="/auth",
-    tags=["auth"],
+    tags=["Auth"],
 )
 
 
