@@ -15,8 +15,8 @@ class CollectionName(str, Enum):
 
 
 class Database:
-    def __init__(self, config: Configuration):
-        URI = config.LOCAL_URI if config.IS_LOCAL else config.REMOTE_URI
+    def __init__(self, config: Configuration, is_local: bool = False):
+        URI = config.LOCAL_URI if is_local else config.REMOTE_URI
         self.client = AsyncMongoClient(URI)
         self.db = self.client.agrismart  # name of the database
 
@@ -29,3 +29,6 @@ class Database:
     def get_collection(self, name: CollectionName) -> AsyncCollection:
         collection = self.db[name.value]
         return collection
+
+    async def close(self):
+        await self.client.close()

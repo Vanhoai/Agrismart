@@ -16,11 +16,11 @@ from agrismart.routers.v1.routes import router as v1
 from agrismart.routers.v2.routes import router as v2
 from agrismart.middlewares import RateLimitingMiddleware, TracingMiddleware
 from agrismart.dependencies import augmenter_monitor
+from agrismart.backgrounds import SyncBackground
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-
+async def lifespan(application: FastAPI):
     # Startup
     config = Configuration()
     await augmenter_monitor(config)
@@ -40,10 +40,14 @@ async def lifespan(app: FastAPI):
     await queue.connect()
     await queue.start_all_consumers()
 
+    # Initialize Background Scheduler
+    sync_background = SyncBackground(config)
+    await sync_background.fake()
+
     # Store in app state
-    app.state.config = config
-    app.state.queue = queue
-    app.state.cryptography = cryptography
+    application.state.config = config
+    application.state.queue = queue
+    application.state.cryptography = cryptography
 
     # Initialize external services
     Cloudinary.setup(config)
@@ -52,15 +56,15 @@ async def lifespan(app: FastAPI):
 
     # Shutdown
     await queue.stop_all_consumers()
-    await app.state.queue.disconnect()
+    await queue.disconnect()
+    await sync_background.stop()
 
 
 app = FastAPI(lifespan=lifespan)
 
-
 # Initialize CORS middleware
-config = Configuration()
-origins = [str(origin) for origin in config.CORS_ALLOWED_ORIGINS.split(",")]
+configuration = Configuration()
+origins = [str(origin) for origin in configuration.CORS_ALLOWED_ORIGINS.split(",")]
 
 # noinspection PyTypeChecker
 app.add_middleware(
@@ -71,7 +75,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# noinspection PyTypeChecker
 app.add_middleware(TracingMiddleware)
+# noinspection PyTypeChecker
 app.add_middleware(RateLimitingMiddleware)
 
 app.include_router(v1, prefix="/api/v1")

@@ -14,6 +14,8 @@ class Configuration(BaseSettings):
     LOCAL_URI: str
     REMOTE_URI: str
     IS_LOCAL: bool
+    IS_SYNC_DATABASE_ENABLED: bool
+    SYNC_DATABASE_INTERVAL: int
 
     # roboflow
     ROBOFLOW_KEY: str

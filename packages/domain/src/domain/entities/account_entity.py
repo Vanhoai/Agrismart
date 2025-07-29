@@ -1,6 +1,3 @@
-from bson import ObjectId
-from typing import Dict, Any
-
 from core.helpers import TimeHelper
 from .base_entity import BaseEntity
 

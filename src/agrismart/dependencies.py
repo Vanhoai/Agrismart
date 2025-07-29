@@ -76,8 +76,10 @@ def build_supabase(
     return Supabase(config)
 
 
-def build_database(config: Configuration = Depends(config_from_state)) -> Database:
-    return Database(config)
+def build_database(
+    config: Configuration = Depends(config_from_state),
+) -> Database:
+    return Database(config, config.IS_LOCAL)
 
 
 async def augmenter_monitor(config: Configuration):
