@@ -6,7 +6,7 @@ from core.base import Meta
 from core.exceptions import ExceptionHandler, ErrorCodes
 
 from domain.entities import AccountEntity
-from domain.usecases import ManageAccountUseCase, FindAccountsQuery
+from domain.usecases import ManageAccountUseCase, FindAccountsQuery, CreateAccountRequest
 from domain.repositories import AccountRepository
 
 
@@ -38,9 +38,32 @@ class AccountService(ManageAccountUseCase):
 
         return accounts, meta
 
-    async def find_by_id(self, id: str) -> AccountEntity:
-        account = await self.account_repository.find_one({"_id": ObjectId(id)})
+    async def find_by_id(self, account_id: str) -> AccountEntity:
+        account = await self.account_repository.find_one({"_id": ObjectId(account_id)})
         if not account:
-            raise ExceptionHandler(code=ErrorCodes.NOT_FOUND, msg=f"Account with ID {id} not found.")
+            raise ExceptionHandler(code=ErrorCodes.NOT_FOUND, msg=f"Account with ID {id} not found 🥹")
 
         return account
+
+    async def find_by_email(self, email: str) -> AccountEntity:
+        account = await self.account_repository.find_one({"email": email})
+        if not account:
+            raise ExceptionHandler(code=ErrorCodes.NOT_FOUND, msg=f"Account with email {email} not found 😂")
+
+        return account
+
+    async def create_account(self, req: CreateAccountRequest) -> AccountEntity:
+        account_entity = AccountEntity.create(
+            username=req.username,
+            email=req.email,
+            avatar=req.avatar,
+            device_token=req.device_token,
+        )
+
+        existing_account = await self.account_repository.find_one({"email": req.email})
+        if existing_account:
+            raise ExceptionHandler(
+                code=ErrorCodes.BAD_REQUEST, msg="Please use another email, this email already exists 🥺"
+            )
+
+        return await self.account_repository.create(account_entity)

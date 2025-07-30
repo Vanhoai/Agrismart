@@ -5,7 +5,7 @@ from typing import List, Tuple
 from core.base import Meta
 from core.exceptions import ExceptionHandler, ErrorCodes
 
-from domain.usecases import ManageRoleUseCase, CreateRoleRequest, FindRolesQuery
+from domain.usecases import ManageRoleUseCase, CreateRoleRequest, FindRolesQuery, UpdateRoleRequest
 from domain.repositories import RoleRepository, AccountRepository
 from domain.entities import RoleEntity
 
@@ -22,12 +22,18 @@ class RoleService(ManageRoleUseCase):
     async def create_role(self, request: CreateRoleRequest) -> RoleEntity:
         role = await self.role_repository.find_one({"account_id": ObjectId(request.account_id)})
         if role:
-            raise ExceptionHandler(ErrorCodes.ALREADY_EXISTS, f"Role for account {request.account_id} already exists.")
+            raise ExceptionHandler(
+                ErrorCodes.ALREADY_EXISTS,
+                f"Role for account {request.account_id} already exists 😉",
+            )
 
         account = await self.account_repository.find_one({"_id": ObjectId(request.account_id)})
 
         if not account:
-            raise ExceptionHandler(ErrorCodes.NOT_FOUND, f"Account with ID {request.account_id} not found.")
+            raise ExceptionHandler(
+                ErrorCodes.NOT_FOUND,
+                f"Account with ID {request.account_id} not found in database 🤣",
+            )
 
         entity = RoleEntity.create(request.account_id, request.role)
         response = await self.role_repository.create(entity)
@@ -36,7 +42,7 @@ class RoleService(ManageRoleUseCase):
     async def find_role_by_account_id(self, account_id: str) -> RoleEntity:
         role = await self.role_repository.find_one({"account_id": ObjectId(account_id)})
         if not role:
-            raise ExceptionHandler(ErrorCodes.NOT_FOUND, f"Role for account {account_id} not found.")
+            raise ExceptionHandler(ErrorCodes.NOT_FOUND, f"Account with ID {account_id} not found any role assigned 🐶")
 
         return role
 
@@ -50,3 +56,22 @@ class RoleService(ManageRoleUseCase):
         )
 
         return roles, meta
+
+    async def update_role(self, request: UpdateRoleRequest) -> RoleEntity:
+        role = await self.role_repository.find_one({"account_id": ObjectId(request.account_id)})
+        if not role:
+            raise ExceptionHandler(
+                ErrorCodes.NOT_FOUND, f"Account with ID {request.account_id} not found any role assigned 🐶"
+            )
+
+        role.role = request.role.value
+        updated_role = await self.role_repository.update_one(role)
+        return updated_role
+
+    async def delete_role(self, role_id: str) -> RoleEntity:
+        entity = await self.role_repository.find_one({"_id": ObjectId(role_id)})
+        if not entity:
+            raise ExceptionHandler(ErrorCodes.NOT_FOUND, f"Role with ID {role_id} not found in database 🐶")
+
+        await self.role_repository.delete_one(role_id)
+        return entity

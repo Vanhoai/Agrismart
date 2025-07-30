@@ -14,6 +14,9 @@ class Configuration(BaseSettings):
     LOCAL_URI: str
     REMOTE_URI: str
     IS_LOCAL: bool
+    IS_SYNC_DATABASE_ENABLED: bool
+    SYNC_DATABASE_INTERVAL: int
+    IS_ENABLE_ARGUMENTATION: bool
 
     # roboflow
     ROBOFLOW_KEY: str
@@ -30,6 +33,9 @@ class Configuration(BaseSettings):
 
     # queue
     RABBITMQ_BROKER_URL: str
+
+    # google
+    GEMINI_API_KEY: str
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

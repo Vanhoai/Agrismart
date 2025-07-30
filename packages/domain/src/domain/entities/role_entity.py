@@ -7,6 +7,7 @@ from domain.entities import BaseEntity
 class EnumRole(Enum):
     FARMER = 0
     PROFESSOR = 1
+    ADMIN = 2
     SUPER = 100
 
 

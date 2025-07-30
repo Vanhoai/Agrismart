@@ -1,5 +1,6 @@
+import asyncio
 from bson import ObjectId
-from typing import Generic, Type, TypeVar, Optional, List, Tuple, Literal
+from typing import Generic, Type, TypeVar, Optional, List, Tuple
 from pymongo import ASCENDING, DESCENDING
 from pymongo.asynchronous.collection import AsyncCollection
 
@@ -30,6 +31,21 @@ class BaseRepository(Generic[T]):
             return self.convert_doc_to_entity(entity_dict)
 
         return None
+
+    async def update_one(self, entity: T) -> T:
+        entity_dict = entity.model_dump(exclude_unset=True)
+
+        # convert all fields contain "_id" string to ObjectId
+        for key, value in entity_dict.items():
+            if "_id" in key and key != "_id":
+                entity_dict[key] = ObjectId(value)
+
+        await self.collection.update_one({"_id": ObjectId(entity.id)}, {"$set": entity_dict})
+        return entity
+
+    async def delete_one(self, id: str) -> bool:
+        result = await self.collection.delete_one({"_id": ObjectId(id)})
+        return result.deleted_count > 0
 
     async def find(self, query=None) -> list[T]:
         if query is None:
@@ -72,11 +88,10 @@ class BaseRepository(Generic[T]):
             .sort(order_by, ASCENDING if order == "asc" else DESCENDING)
         )
 
-        docs = await cursor.to_list(length=None)
-        total = await self.collection.count_documents(query)
+        tasks = [cursor.to_list(length=None), self.collection.count_documents(query)]
+        docs, total = await asyncio.gather(*tasks)
 
         total_page = (total // page_size) + (1 if total % page_size > 0 else 0)
-
         meta = Meta(
             page=page,
             page_size=page_size,

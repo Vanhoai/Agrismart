@@ -5,13 +5,14 @@ from core.configuration import Configuration
 from core.database import Database, CollectionName
 from core.secures import Cryptography, Jwt
 
-from domain.repositories import AccountRepository, RoleRepository, PostRepository
-from domain.services import AuthService, AccountService, RoleService, MediaService
+from domain.repositories import AccountRepository, RoleRepository, PostRepository, DiagnosticRepository
+from domain.services import AuthService, AccountService, RoleService, MediaService, DiagnosticService
 from domain.services.post_service import PostService
 
 from infrastructure.apis import Supabase
 from infrastructure.augmenters import Augmenter
 from infrastructure.queues import RabbitMQConnection
+from infrastructure.repositories import DiagnosticRepositoryImpl
 
 # Global instances
 # _config = Configuration()
@@ -75,8 +76,10 @@ def build_supabase(
     return Supabase(config)
 
 
-def build_database(config: Configuration = Depends(config_from_state)) -> Database:
-    return Database(config)
+def build_database(
+    config: Configuration = Depends(config_from_state),
+) -> Database:
+    return Database(config, config.IS_LOCAL)
 
 
 async def augmenter_monitor(config: Configuration):
@@ -101,6 +104,12 @@ def build_role_repository(database: Database = Depends(build_database)) -> RoleR
 def build_post_repository(database: Database = Depends(build_database)) -> PostRepository:
     collection = database.get_collection(CollectionName.POSTS)
     return PostRepository(collection)
+
+
+def build_diagnostic_repository(
+    config: Configuration = Depends(config_from_state),
+) -> DiagnosticRepository:
+    return DiagnosticRepositoryImpl(config)
 
 
 def build_auth_service(
@@ -134,3 +143,9 @@ def build_post_service(
     queue: RabbitMQConnection = Depends(queue_from_state),
 ) -> PostService:
     return PostService(post_repository, account_repository, queue)
+
+
+def build_diagnostic_service(
+    diagnostic_repository: DiagnosticRepository = Depends(build_diagnostic_repository),
+):
+    return DiagnosticService(diagnostic_repository)

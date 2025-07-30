@@ -1,21 +1,23 @@
-from bson import ObjectId
-from typing import Dict, Any
+from typing import Optional
 
 from core.helpers import TimeHelper
 from .base_entity import BaseEntity
 
 
+# FIXME: Create account response for ignore password in response
 class AccountEntity(BaseEntity):
     username: str
     email: str
+    password: Optional[str]
     avatar: str
     device_token: str
 
     @staticmethod
-    def create(username: str, email: str, avatar: str, device_token: str):
+    def create(username: str, email: str, password: Optional[str], avatar: str, device_token: str):
         return AccountEntity(
             username=username,
             email=email,
+            password=password,
             avatar=avatar,
             device_token=device_token,
             created_at=TimeHelper.vn_timezone(),
