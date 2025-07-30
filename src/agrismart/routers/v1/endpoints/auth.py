@@ -1,13 +1,10 @@
 from fastapi import APIRouter, Depends, status
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
 
-from core.base import HttpResponse
-from domain.usecases import OAuthRequest, SignInWithEmailRequest
+from domain.usecases import OAuthRequest, SignInWithEmailPasswordRequest
 from domain.services import AuthService
 
 from agrismart.dependencies import build_auth_service
-from agrismart.decorators import exception_decorator
+from agrismart.decorators import exception_decorator, auto_response_decorator
 
 router = APIRouter(
     prefix="/auth",
@@ -17,18 +14,15 @@ router = APIRouter(
 
 @router.post("/oauth")
 @exception_decorator
+@auto_response_decorator(
+    message="OAuth authentication successful ✅",
+    status_code=status.HTTP_200_OK,
+)
 async def oauth(
     body: OAuthRequest,
     auth_service: AuthService = Depends(build_auth_service),
 ):
-    account = await auth_service.oauth(body)
-    http_response = HttpResponse(
-        status_code=status.HTTP_200_OK,
-        message="OAuth successfully ✅",
-        data=account,
-    )
-
-    return JSONResponse(content=jsonable_encoder(http_response))
+    return await auth_service.oauth(body)
 
 
 @router.post("/face-auth")
@@ -41,17 +35,14 @@ async def face_auth():
     raise NotImplementedError("Face authentication is not yet implemented.")
 
 
-@router.post("/sign-in-with-email")
+@router.post("/auth-with-email")
 @exception_decorator
-async def sign_in_with_email(
-    body: SignInWithEmailRequest,
+@auto_response_decorator(
+    message="Authenticated successfully with email and password ✅",
+    status_code=status.HTTP_200_OK,
+)
+async def auth_with_email(
+    body: SignInWithEmailPasswordRequest,
     auth_service: AuthService = Depends(build_auth_service),
 ):
-    account = await auth_service.sign_in_with_email(body)
-    http_response = HttpResponse(
-        status_code=status.HTTP_200_OK,
-        message="Sign in with email successfully ✅",
-        data=account,
-    )
-
-    return JSONResponse(content=jsonable_encoder(http_response))
+    return await auth_service.auth_with_email_password(body)

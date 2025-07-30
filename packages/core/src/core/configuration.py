@@ -16,6 +16,7 @@ class Configuration(BaseSettings):
     IS_LOCAL: bool
     IS_SYNC_DATABASE_ENABLED: bool
     SYNC_DATABASE_INTERVAL: int
+    IS_ENABLE_ARGUMENTATION: bool
 
     # roboflow
     ROBOFLOW_KEY: str

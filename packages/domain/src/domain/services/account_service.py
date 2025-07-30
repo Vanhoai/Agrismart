@@ -38,10 +38,17 @@ class AccountService(ManageAccountUseCase):
 
         return accounts, meta
 
-    async def find_by_id(self, id: str) -> AccountEntity:
-        account = await self.account_repository.find_one({"_id": ObjectId(id)})
+    async def find_by_id(self, account_id: str) -> AccountEntity:
+        account = await self.account_repository.find_one({"_id": ObjectId(account_id)})
         if not account:
-            raise ExceptionHandler(code=ErrorCodes.NOT_FOUND, msg=f"Account with ID {id} not found.")
+            raise ExceptionHandler(code=ErrorCodes.NOT_FOUND, msg=f"Account with ID {id} not found 🥹")
+
+        return account
+
+    async def find_by_email(self, email: str) -> AccountEntity:
+        account = await self.account_repository.find_one({"email": email})
+        if not account:
+            raise ExceptionHandler(code=ErrorCodes.NOT_FOUND, msg=f"Account with email {email} not found 😂")
 
         return account
 

@@ -1,4 +1,10 @@
-from .auth_usecases import AuthUseCase, OAuthRequest, AuthResponse, SignInWithEmailRequest
+from .auth_usecases import (
+    AuthUseCase,
+    OAuthRequest,
+    AuthResponse,
+    SignInWithEmailRequest,
+    SignInWithEmailPasswordRequest
+)
 from .account_usecases import ManageAccountUseCase, FindAccountsQuery, CreateAccountRequest
 from .role_usecases import ManageRoleUseCase, CreateRoleRequest, FindRolesQuery, UpdateRoleRequest
 from .media_usecases import UploadMediaUseCase, UploadMediaRequest
@@ -12,6 +18,7 @@ __all__ = [
     "OAuthRequest",
     "AuthResponse",
     "SignInWithEmailRequest",
+    "SignInWithEmailPasswordRequest",
     # account
     "ManageAccountUseCase",
     "FindAccountsQuery",

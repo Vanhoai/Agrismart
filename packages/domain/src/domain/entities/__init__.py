@@ -5,13 +5,17 @@ from .disease_entity import DiseaseEntity
 from .notification_entity import NotificationEntity
 from .submission_entity import SubmissionEntity
 from .post_entity import PostEntity
+from .provider_entity import EnumProvider, ProviderEntity
 
 __all__ = [
     "AccountEntity",
     "BaseEntity",
     "RoleEntity",
+    "EnumRole",
     "DiseaseEntity",
     "NotificationEntity",
     "SubmissionEntity",
     "PostEntity",
+    "EnumProvider",
+    "ProviderEntity"
 ]

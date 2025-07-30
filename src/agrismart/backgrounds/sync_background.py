@@ -1,8 +1,9 @@
 import asyncio
 import datetime
-
+from tabulate import tabulate
 from loguru import logger
 from typing import Optional
+
 from core.configuration import Configuration
 from infrastructure.schedulers import SyncScheduler
 
@@ -13,14 +14,6 @@ class SyncBackground:
         self.sync_scheduler = SyncScheduler(config)
         self.task: Optional[asyncio.Task] = None
         self.is_running = False
-
-    async def fake(self):
-        if not self.config.IS_SYNC_DATABASE_ENABLED:
-            logger.info("Sync database is disabled 🤣, skipping background scheduler initialization")
-            return
-
-        logger.info(f"Initializing background sync scheduler with interval: {self.config.SYNC_INTERVAL} minutes")
-        await self.sync_scheduler.sync_collections()
 
     async def start(self):
         if not self.config.IS_SYNC_DATABASE_ENABLED:
@@ -61,17 +54,18 @@ class SyncBackground:
                 logger.info(f"Starting sync at {start_time}")
                 results = await self.sync_scheduler.sync_collections()
 
-                total_synced = sum(r.get("synced", 0) for r in results.values())
-                total_skipped = sum(r.get("skipped", 0) for r in results.values())
-
                 end_time = datetime.datetime.now()
                 duration = (end_time - start_time).total_seconds()
 
-                logger.info(f"Sync completed in {duration:.2f}s - "
-                            f"Synced: {total_synced}, Skipped: {total_skipped}")
-
+                table = []
                 for collection, stats in results.items():
-                    logger.info(f"  {collection}: {stats['synced']} synced, {stats['skipped']} skipped")
+                    table.append([collection, stats["synced"], stats["skipped"], stats["errors"]])  # type: ignore
+
+                end = datetime.datetime.now()
+                logger.info(f"Sync background scheduler finished at {end} - Duration: {duration} seconds")
+                logger.info(
+                    f"Sync results:\n{tabulate(table, headers=["Collection", "Synced", "Skipped", "Errors"], tablefmt="pretty")}"
+                )
 
                 logger.info(f"Next sync in {interval // 60} minutes")
                 await asyncio.sleep(interval)
@@ -87,8 +81,8 @@ class SyncBackground:
             logger.info("Running sync manually...")
             results = await self.sync_scheduler.sync_collections()
 
-            total_synced = sum(r.get("synced", 0) for r in results.values())
-            total_skipped = sum(r.get("skipped", 0) for r in results.values())
+            total_synced = sum(r.get("synced", 0) for r in results.values())  # type: ignore
+            total_skipped = sum(r.get("skipped", 0) for r in results.values())  # type: ignore
 
             logger.info(f"Manual sync completed - Synced: {total_synced}, Skipped: {total_skipped}")
             return results

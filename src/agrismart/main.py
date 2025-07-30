@@ -1,4 +1,5 @@
 import os
+from loguru import logger
 from fastapi import FastAPI
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
@@ -23,7 +24,10 @@ from agrismart.backgrounds import SyncBackground
 async def lifespan(application: FastAPI):
     # Startup
     config = Configuration()
-    await augmenter_monitor(config)
+    if config.IS_ENABLE_ARGUMENTATION:
+        await augmenter_monitor(config)
+    else:
+        logger.info("Argumentation is disabled, skipping augmenter monitor 🐶")
 
     # Create shared instances
     directory = os.path.join(os.getcwd(), "keys")
@@ -42,11 +46,14 @@ async def lifespan(application: FastAPI):
 
     # Initialize Background Scheduler
     sync_background = SyncBackground(config)
-    await sync_background.fake()
+    await sync_background.start()
 
     # Store in app state
+    # noinspection PyUnresolvedReferences
     application.state.config = config
+    # noinspection PyUnresolvedReferences
     application.state.queue = queue
+    # noinspection PyUnresolvedReferences
     application.state.cryptography = cryptography
 
     # Initialize external services
