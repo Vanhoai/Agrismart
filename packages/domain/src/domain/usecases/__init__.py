@@ -3,9 +3,14 @@ from .auth_usecases import (
     OAuthRequest,
     AuthResponse,
     SignInWithEmailRequest,
-    SignInWithEmailPasswordRequest
+    SignInWithEmailPasswordRequest,
 )
-from .account_usecases import ManageAccountUseCase, FindAccountsQuery, CreateAccountRequest
+from .account_usecases import (
+    ManageAccountUseCase,
+    FindAccountsQuery,
+    CreateAccountRequest,
+    FindAccountByEmailQuery,
+)
 from .role_usecases import ManageRoleUseCase, CreateRoleRequest, FindRolesQuery, UpdateRoleRequest
 from .media_usecases import UploadMediaUseCase, UploadMediaRequest
 from .notification_usecases import PushNotificationUseCase
@@ -23,6 +28,7 @@ __all__ = [
     "ManageAccountUseCase",
     "FindAccountsQuery",
     "CreateAccountRequest",
+    "FindAccountByEmailQuery",
     # role
     "ManageRoleUseCase",
     "CreateRoleRequest",
