@@ -94,7 +94,8 @@ app.include_router(v2, prefix="/api/v2")
 # Custom exception handlers when validation fails
 @app.exception_handler(RequestValidationError)
 async def custom_request_validation_exception_handler(_: Request, exc: RequestValidationError):
-    raise ExceptionHandler(code=ErrorCodes.BAD_REQUEST, msg=str(exc))
+    msg = exc.errors()[0].get("msg", "Validation error occurred")
+    raise ExceptionHandler(code=ErrorCodes.BAD_REQUEST, msg=msg)
 
 
 # Custom exception handler for general exceptions

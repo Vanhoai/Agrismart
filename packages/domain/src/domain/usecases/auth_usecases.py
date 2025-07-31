@@ -1,3 +1,4 @@
+from pydantic import Field
 from abc import ABC, abstractmethod
 from fastapi_camelcase import CamelModel
 
@@ -19,7 +20,7 @@ class SignInWithEmailRequest(CamelModel):
 
 class SignInWithEmailPasswordRequest(CamelModel):
     email: str
-    password: str
+    password: str = Field(min_length=5)
     device_token: str
 
 

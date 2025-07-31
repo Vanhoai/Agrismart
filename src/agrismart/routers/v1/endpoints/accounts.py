@@ -30,6 +30,20 @@ async def find_account_by_email(
     return await account_service.find_by_email(query)
 
 
+@router.get("/find-profile")
+@exception_decorator
+@auto_response_decorator(
+    message="Account profile retrieved successfully 🐳",
+    status_code=status.HTTP_200_OK,
+)
+async def find_account_profile(
+    claims: JwtPayload = Depends(auth_middleware.func),
+    passed: bool = Depends(role_middleware.func(required=[])),
+    account_service: AccountService = Depends(build_account_service),
+):
+    return await account_service.find_by_id(claims.id)
+
+
 @router.get("/{account_id}")
 @exception_decorator
 @auto_response_decorator(
