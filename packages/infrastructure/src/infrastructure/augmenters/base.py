@@ -22,15 +22,10 @@ class Augmentation(Generic[T], ABC):
     }
 
     def __init__(
-            self,
-            csv: str,
-            collection: AsyncCollection,
-            collection_name: CollectionName,
+        self,
+        collection: AsyncCollection,
+        collection_name: CollectionName,
     ) -> None:
-        if not os.path.exists(csv):
-            raise FileNotFoundError(f"CSV file {csv} does not exist.")
-
-        self.csv = csv
         self.collection = collection
         self.collection_name = collection_name
 
@@ -95,9 +90,7 @@ class Augmentation(Generic[T], ABC):
         logger.info(f"Time taken to insert entities: {end_time - start_time:.2f} seconds")
 
     @abstractmethod
-    async def insert_one(self, attrs=None) -> Optional[T]:
-        ...
+    async def insert_one(self, attrs=None) -> Optional[T]: ...
 
     @abstractmethod
-    def process_line(self, line: str) -> List[str]:
-        ...
+    def process_line(self, line: str) -> List[str]: ...

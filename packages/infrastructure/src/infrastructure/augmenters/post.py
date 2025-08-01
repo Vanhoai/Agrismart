@@ -48,11 +48,10 @@ tags = [
 class PostAugmenter(Augmentation[PostEntity]):
     def __init__(
         self,
-        csv: str,
         collection: AsyncCollection,
         collection_name: CollectionName,
     ) -> None:
-        super().__init__(csv, collection, collection_name)
+        super().__init__(collection, collection_name)
         self.accounts = []
 
     def process_line(self, line: str) -> List[str]:

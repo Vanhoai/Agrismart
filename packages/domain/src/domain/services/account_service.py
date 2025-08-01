@@ -58,7 +58,6 @@ class AccountService(ManageAccountUseCase):
             email=req.email,
             password=None,
             avatar=req.avatar,
-            device_token=req.device_token,
         )
 
         existing_account = await self.account_repository.find_one({"email": req.email})

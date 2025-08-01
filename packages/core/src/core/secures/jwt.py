@@ -5,18 +5,12 @@ from .cryptography import Cryptography, KeyType, KeyBackend
 
 
 class JwtPayload(CamelModel):
-    # JWT payload structure
-
-    # FIXME: When add aud -> Invalid audience when decode
-    iss: str  # Issuer
-    # aud: str  # Audience
     exp: int  # Expiration time
     iat: int  # Issued at time
 
-    # Custom claims
-    id: str
+    jti: str
     email: str
-    device_token: str
+    account_id: str
 
 
 class Jwt:

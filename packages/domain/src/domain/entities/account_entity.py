@@ -10,16 +10,14 @@ class AccountEntity(BaseEntity):
     email: str
     password: Optional[str]
     avatar: str
-    device_token: str
 
     @staticmethod
-    def create(username: str, email: str, password: Optional[str], avatar: str, device_token: str):
+    def create(username: str, email: str, password: Optional[str], avatar: str) -> "AccountEntity":
         return AccountEntity(
             username=username,
             email=email,
             password=password,
             avatar=avatar,
-            device_token=device_token,
             created_at=TimeHelper.vn_timezone(),
             updated_at=TimeHelper.vn_timezone(),
             deleted_at=None,

@@ -41,7 +41,7 @@ async def find_account_profile(
     passed: bool = Depends(role_middleware.func(required=[])),
     account_service: AccountService = Depends(build_account_service),
 ):
-    return await account_service.find_by_id(claims.id)
+    return await account_service.find_by_id(claims.account_id)
 
 
 @router.get("/{account_id}")

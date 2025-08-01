@@ -9,6 +9,7 @@ from core.configuration import Configuration
 class CollectionName(str, Enum):
     ACCOUNTS = "accounts"
     ROLES = "roles"
+    SESSIONS = "sessions"
     SUBMISSIONS = "submissions"
     POSTS = "posts"
     DISEASES = "diseases"
