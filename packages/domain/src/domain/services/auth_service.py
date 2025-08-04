@@ -1,5 +1,7 @@
 import uuid
 import asyncio
+
+from core.configuration import Configuration
 from domain.usecases.auth_usecases import RefreshTokenParams
 from fastapi import Depends
 from argon2 import PasswordHasher
@@ -30,13 +32,14 @@ class AuthService(ManageSignInUseCase, ManageAuthSessionUseCase):
         session_repository: SessionRepository = Depends(),
         supabase: Supabase = Depends(),
         jwt: Jwt = Depends(),
+        config: Configuration = Depends(),
     ):
         self.account_repository = account_repository
         self.session_repository = session_repository
         self.supabase = supabase
         self.jwt = jwt
+        self.config = config
 
-    # FIXME: update device token and rehandle logic this function
     async def oauth(self, req: OAuthRequest) -> AuthResponse:
         user_supabase: UserSupabaseMetadata = self.supabase.sign_in_google(
             req.id_token,
@@ -76,7 +79,9 @@ class AuthService(ManageSignInUseCase, ManageAuthSessionUseCase):
         pass
 
     async def auth_with_email_password(self, req: AuthWithEmailPasswordRequest) -> AuthResponse:
+        # check if account exists
         account = await self.account_repository.find_one({"email": req.email})
+
         ph = PasswordHasher()
         if account is None:
             password_hash = ph.hash(req.password)
@@ -88,42 +93,27 @@ class AuthService(ManageSignInUseCase, ManageAuthSessionUseCase):
                 avatar="https://i.pinimg.com/736x/ca/77/fa/ca77fadb377a2e583a1cc881d0d9e236.jpg",
             )
 
+            # create new account
             account = await self.account_repository.create(account_entity)
         else:
-            # if account exists -> check password
-            # if password None in database -> account have social provider -> reset password
-            # else check password
             if account.password is None:
-                raise ExceptionHandler(
-                    code=ErrorCodes.BAD_REQUEST,
-                    msg="Account have social provider, please reset password 🥺",
-                )
+                # reset password
+                raise ExceptionHandler(ErrorCodes.BAD_REQUEST, "Account have social provider, please reset password 🥺")
 
+            # verify password
             if not ph.verify(account.password, req.password):
-                raise ExceptionHandler(
-                    code=ErrorCodes.BAD_REQUEST,
-                    msg="Your password is incorrect, please try again 🤧",
-                )
-
-            # update device token
-            account.updated_at = TimeHelper.vn_timezone()
-            account = await self.account_repository.update_one(account)
+                raise ExceptionHandler(ErrorCodes.BAD_REQUEST, "Your password is incorrect, please try again 🤧")
 
         timestamp = TimeHelper.vn_timezone().timestamp()
-        exp = int(timestamp + 2 * 60 * 60)
+        exp = int(timestamp + self.config.ACCESS_TOKEN_EXPIRATION)
         iat = int(timestamp)
 
         jti = str(uuid.uuid4())
-        payload: JwtPayload = JwtPayload(
-            exp=exp,
-            iat=iat,
-            jti=jti,
-            email=account.email,
-            account_id=str(account.id),
-        )
+        access_payload: JwtPayload = JwtPayload(exp, iat, jti, account.email, str(account.id))
+        refresh_payload: JwtPayload = access_payload.clone(exp=int(timestamp + self.config.REFRESH_TOKEN_EXPIRATION))
 
-        access_token = self.jwt.encode(payload, KeyType.ACCESS)
-        refresh_token = self.jwt.encode(payload, KeyType.REFRESH)
+        access_token = self.jwt.encode(access_payload, KeyType.ACCESS)
+        refresh_token = self.jwt.encode(refresh_payload, KeyType.REFRESH)
 
         session = SessionEntity.create(
             account_id=str(account.id),
@@ -134,10 +124,7 @@ class AuthService(ManageSignInUseCase, ManageAuthSessionUseCase):
             # ip_address=req.ip_address,
         )
 
-        # delete all sessions of account
-        # FIXME: This logic only apply in case allow one session per account
-        # if you want to allow multiple sessions, you should remove this logic
-        await self.session_repository.delete_many({"account_id": ObjectId(account.id)})
+        # create session
         await self.session_repository.create(session)
 
         return AuthResponse(access_token=access_token, refresh_token=refresh_token)

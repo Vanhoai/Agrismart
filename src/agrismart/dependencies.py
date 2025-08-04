@@ -20,6 +20,7 @@ from infrastructure.augmenters import Augmenter
 from infrastructure.queues import RabbitMQConnection
 from infrastructure.repositories import DiagnosticRepositoryImpl
 
+
 # Global instances
 # _config = Configuration()
 # _cryptography = None
@@ -130,8 +131,9 @@ def build_auth_service(
     session_repository: SessionRepository = Depends(build_session_repository),
     supabase: Supabase = Depends(build_supabase),
     jwt: Jwt = Depends(build_jwt),
+    config: Configuration = Depends(config_from_state),
 ) -> AuthService:
-    return AuthService(account_repository, session_repository, supabase, jwt)
+    return AuthService(account_repository, session_repository, supabase, jwt, config)
 
 
 def build_account_service(

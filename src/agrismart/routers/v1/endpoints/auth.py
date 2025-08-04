@@ -39,20 +39,6 @@ async def oauth(
     return await auth_service.oauth(body)
 
 
-@router.post("/face-auth")
-@exception_decorator
-@auto_response_decorator(
-    message="Face authentication is not yet implemented.",
-    status_code=status.HTTP_501_NOT_IMPLEMENTED,
-)
-async def face_auth():
-    """
-    Placeholder for face authentication endpoint.
-    This function should be implemented to handle face authentication logic.
-    """
-    raise NotImplementedError("Face authentication is not yet implemented.")
-
-
 @router.post("/refresh-token")
 @exception_decorator
 @auto_response_decorator(
