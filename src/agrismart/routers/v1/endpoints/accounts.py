@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query, status
 
 from core.secures import JwtPayload
 
-from domain.usecases import FindAccountsQuery, CreateAccountRequest, FindAccountByEmailQuery
+from domain.usecases import FindAccountsQuery, CreateAccountRequest, FindAccountByEmailQuery, CreateProviderParams
 from domain.services import AccountService
 from domain.entities import EnumRole
 
@@ -42,6 +42,22 @@ async def find_account_profile(
     account_service: AccountService = Depends(build_account_service),
 ):
     return await account_service.find_by_id(claims.account_id)
+
+
+@router.post("/{account_id}/create-provider")
+@exception_decorator
+@auto_response_decorator(
+    message="Provider created successfully 🐳",
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_provider(
+    account_id: str,
+    params: CreateProviderParams,
+    claims: JwtPayload = Depends(auth_middleware.func),
+    passed: bool = Depends(role_middleware.func(required=[])),
+    account_service: AccountService = Depends(build_account_service),
+):
+    return await account_service.create_provider(account_id, params)
 
 
 @router.get("/{account_id}")

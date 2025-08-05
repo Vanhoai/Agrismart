@@ -25,7 +25,7 @@ async def func(
 ) -> AccountEntity:
     try:
         claims = await required_authentication(req, jwt)
-        account = await account_service.find_by_id(claims.id)
+        account = await account_service.find_by_id(claims.account_id)
 
         if not account:
             raise ExceptionHandler(code=ErrorCodes.UNAUTHORIZED, msg="Account not found in database 🐔")

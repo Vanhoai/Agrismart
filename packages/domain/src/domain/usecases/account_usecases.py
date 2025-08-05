@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
-from core.base import BaseQuery, Meta
 from typing import Tuple, List
 from fastapi_camelcase import CamelModel
-from domain.entities import AccountEntity
+
+from core.base import BaseQuery, Meta
+from domain.entities import AccountEntity, EnumProvider, ProviderEntity
+
+# ============================== MANAGE ACCOUNT USECASES ==============================
 
 
 class FindAccountsQuery(BaseQuery):
@@ -35,3 +38,14 @@ class ManageAccountUseCase(ABC):
 
     @abstractmethod
     async def find_by_email(self, req: FindAccountByEmailQuery) -> AccountEntity: ...
+
+
+# ============================== MANAGE ACCOUNT PROVIDER USECASES ==============================
+class CreateProviderParams(CamelModel):
+    provider: EnumProvider
+    payload: dict
+
+
+class ManageAccountProviderUseCase(ABC):
+    @abstractmethod
+    async def create_provider(self, account_id: str, params: CreateProviderParams) -> ProviderEntity: ...

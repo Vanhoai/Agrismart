@@ -25,7 +25,6 @@ class AccountAugmenter(Augmentation[AccountEntity]):
             email=email,
             password=None,
             avatar=avatar,
-            device_token=device_token,
         )
 
         entity_dict = entity.model_dump(exclude_unset=True)

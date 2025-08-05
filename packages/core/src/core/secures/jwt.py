@@ -1,12 +1,13 @@
 import jwt
 from fastapi_camelcase import CamelModel
+from typing import Optional
 
 from .cryptography import Cryptography, KeyType, KeyBackend
 
 
 class JwtPayload(CamelModel):
-    aud: str = "agrismart"  # Audience
-    iss: str = "agrismart"  # Issuer
+    # aud: str = "agrismart"  # Audience
+    # iss: str = "agrismart"  # Issuer
     exp: int  # Expiration time
     iat: int  # Issued at time
 
@@ -14,22 +15,13 @@ class JwtPayload(CamelModel):
     email: str
     account_id: str
 
-    def __init__(self, exp: int = None, iat: int = None, jti: str = None, email: str = None, account_id: str = None):
-        super().__init__(
-            exp=exp,
-            iat=iat,
-            jti=jti,
-            email=email,
-            account_id=account_id,
-        )
-
     def clone(
         self,
-        exp: int = None,
-        iat: int = None,
-        jti: str = None,
-        email: str = None,
-        account_id: str = None,
+        exp: Optional[int] = None,
+        iat: Optional[int] = None,
+        jti: Optional[str] = None,
+        email: Optional[str] = None,
+        account_id: Optional[str] = None,
     ) -> "JwtPayload":
         return JwtPayload(
             exp=exp or self.exp,
@@ -37,6 +29,16 @@ class JwtPayload(CamelModel):
             jti=jti or self.jti,
             email=email or self.email,
             account_id=account_id or self.account_id,
+        )
+
+    @staticmethod
+    def from_dict(data: dict) -> "JwtPayload":
+        return JwtPayload(
+            exp=data.get("exp"),
+            iat=data.get("iat"),
+            jti=data.get("jti"),
+            email=data.get("email"),
+            account_id=data.get("account_id"),
         )
 
 
@@ -60,4 +62,4 @@ class Jwt:
     def decode(self, token: str, key_type: KeyType) -> JwtPayload:
         public_key = self.cryptography.load_key(key_type, is_public=True)
         payload = jwt.decode(token, public_key, algorithms=[self.algorithm])
-        return JwtPayload(**payload)
+        return JwtPayload.from_dict(payload)

@@ -20,5 +20,9 @@ class Supabase:
             }
         )
 
-        user = UserSupabaseMetadata.from_json(jsonable_encoder(response.user.user_metadata))  # type: ignore
+        uid = response.user.id  # type: ignore
+        if not uid:
+            raise Exception("Failed to retrieve user ID from Supabase response")
+
+        user = UserSupabaseMetadata.from_json(uid, jsonable_encoder(response.user.user_metadata))  # type: ignore
         return user

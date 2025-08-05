@@ -1,5 +1,5 @@
 from domain.usecases.auth_usecases import RefreshTokenParams
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 
 from domain.usecases import OAuthRequest, AuthWithEmailPasswordRequest
 from domain.services import AuthService
@@ -20,9 +20,12 @@ router = APIRouter(
     status_code=status.HTTP_200_OK,
 )
 async def auth_with_email(
+    req: Request,
     body: AuthWithEmailPasswordRequest,
     auth_service: AuthService = Depends(build_auth_service),
 ):
+    ip_address = req.client.host if req.client else "Unknown"
+    body.ip_address = ip_address
     return await auth_service.auth_with_email_password(body)
 
 

@@ -11,6 +11,7 @@ from domain.repositories import (
     PostRepository,
     DiagnosticRepository,
     SessionRepository,
+    ProviderRepository,
 )
 from domain.services import AuthService, AccountService, RoleService, MediaService, DiagnosticService
 from domain.services.post_service import PostService
@@ -126,20 +127,37 @@ def build_session_repository(
     return SessionRepository(collection)
 
 
+def build_provider_repository(
+    database: Database = Depends(build_database),
+) -> ProviderRepository:
+    collection = database.get_collection(CollectionName.PROVIDERS)
+    return ProviderRepository(collection)
+
+
 def build_auth_service(
     account_repository: AccountRepository = Depends(build_account_repository),
     session_repository: SessionRepository = Depends(build_session_repository),
+    provider_repository: ProviderRepository = Depends(build_provider_repository),
     supabase: Supabase = Depends(build_supabase),
     jwt: Jwt = Depends(build_jwt),
     config: Configuration = Depends(config_from_state),
 ) -> AuthService:
-    return AuthService(account_repository, session_repository, supabase, jwt, config)
+    return AuthService(
+        account_repository,
+        session_repository,
+        provider_repository,
+        supabase,
+        jwt,
+        config,
+    )
 
 
 def build_account_service(
     account_repository: AccountRepository = Depends(build_account_repository),
+    provider_repository: ProviderRepository = Depends(build_provider_repository),
+    supabase: Supabase = Depends(build_supabase),
 ) -> AccountService:
-    return AccountService(account_repository)
+    return AccountService(account_repository, provider_repository, supabase)
 
 
 def build_role_service(

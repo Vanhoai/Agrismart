@@ -16,9 +16,8 @@ from infrastructure.queues import RabbitMQConnection
 from agrismart.routers.v1.routes import router as v1
 from agrismart.routers.v2.routes import router as v2
 from agrismart.middlewares import RateLimitingMiddleware, TracingMiddleware
-from agrismart.dependencies import augmenter_monitor
+from agrismart.dependencies import augmenter_monitor, build_database
 from agrismart.backgrounds import ManageBackgroundTasks
-from agrismart.dependencies import build_database
 
 
 @asynccontextmanager
