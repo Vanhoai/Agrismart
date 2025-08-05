@@ -5,18 +5,39 @@ from .cryptography import Cryptography, KeyType, KeyBackend
 
 
 class JwtPayload(CamelModel):
-    # JWT payload structure
-
-    # FIXME: When add aud -> Invalid audience when decode
-    iss: str  # Issuer
-    # aud: str  # Audience
+    aud: str = "agrismart"  # Audience
+    iss: str = "agrismart"  # Issuer
     exp: int  # Expiration time
     iat: int  # Issued at time
 
-    # Custom claims
-    id: str
+    jti: str
     email: str
-    device_token: str
+    account_id: str
+
+    def __init__(self, exp: int = None, iat: int = None, jti: str = None, email: str = None, account_id: str = None):
+        super().__init__(
+            exp=exp,
+            iat=iat,
+            jti=jti,
+            email=email,
+            account_id=account_id,
+        )
+
+    def clone(
+        self,
+        exp: int = None,
+        iat: int = None,
+        jti: str = None,
+        email: str = None,
+        account_id: str = None,
+    ) -> "JwtPayload":
+        return JwtPayload(
+            exp=exp or self.exp,
+            iat=iat or self.iat,
+            jti=jti or self.jti,
+            email=email or self.email,
+            account_id=account_id or self.account_id,
+        )
 
 
 class Jwt:

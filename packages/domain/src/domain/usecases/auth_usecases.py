@@ -1,11 +1,12 @@
+from pydantic import Field
 from abc import ABC, abstractmethod
 from fastapi_camelcase import CamelModel
 
 
+# ============================== AUTH USE CASES ==============================
 class OAuthRequest(CamelModel):
     id_token: str
     raw_nonce: str
-    device_token: str
 
 
 class AuthResponse(CamelModel):
@@ -13,17 +14,12 @@ class AuthResponse(CamelModel):
     refresh_token: str
 
 
-class SignInWithEmailRequest(CamelModel):
+class AuthWithEmailPasswordRequest(CamelModel):
     email: str
+    password: str = Field(min_length=5)
 
 
-class SignInWithEmailPasswordRequest(CamelModel):
-    email: str
-    password: str
-    device_token: str
-
-
-class AuthUseCase(ABC):
+class ManageSignInUseCase(ABC):
     @abstractmethod
     async def oauth(self, req: OAuthRequest) -> AuthResponse: ...
 
@@ -31,7 +27,14 @@ class AuthUseCase(ABC):
     async def face_auth(self): ...
 
     @abstractmethod
-    async def sign_in_with_email(self, req: SignInWithEmailRequest) -> AuthResponse: ...
+    async def auth_with_email_password(self, req: AuthWithEmailPasswordRequest) -> AuthResponse: ...
 
+
+# ============================== MANAGE AUTH SESSION USE CASE ==============================
+class RefreshTokenParams(CamelModel):
+    refresh_token: str
+
+
+class ManageAuthSessionUseCase(ABC):
     @abstractmethod
-    async def auth_with_email_password(self, req: SignInWithEmailPasswordRequest) -> AuthResponse: ...
+    async def refresh_token(self, params: RefreshTokenParams) -> AuthResponse: ...

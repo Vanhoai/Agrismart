@@ -30,4 +30,4 @@ async def create_post(
     passed: bool = Depends(role_middleware.func(required=[])),
     post_service: PostService = Depends(build_post_service),
 ):
-    return await post_service.create_post(claims.id, req)
+    return await post_service.create_post(claims.account_id, req)

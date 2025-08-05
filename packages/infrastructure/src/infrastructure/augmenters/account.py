@@ -9,11 +9,10 @@ from .base import Augmentation
 class AccountAugmenter(Augmentation[AccountEntity]):
     def __init__(
         self,
-        csv: str,
         collection: AsyncCollection,
         collection_name: CollectionName,
     ) -> None:
-        super().__init__(csv, collection, collection_name)
+        super().__init__(collection, collection_name)
 
     async def insert_one(self, attrs=None) -> Optional[AccountEntity]:
         if attrs is None:
@@ -24,6 +23,7 @@ class AccountAugmenter(Augmentation[AccountEntity]):
         entity = AccountEntity.create(
             username=username,
             email=email,
+            password=None,
             avatar=avatar,
             device_token=device_token,
         )

@@ -43,9 +43,13 @@ class BaseRepository(Generic[T]):
         await self.collection.update_one({"_id": ObjectId(entity.id)}, {"$set": entity_dict})
         return entity
 
-    async def delete_one(self, id: str) -> bool:
-        result = await self.collection.delete_one({"_id": ObjectId(id)})
+    async def delete_one(self, query: dict) -> bool:
+        result = await self.collection.delete_one(query)
         return result.deleted_count > 0
+
+    async def delete_many(self, query: dict) -> int:
+        result = await self.collection.delete_many(query)
+        return result.deleted_count
 
     async def find(self, query=None) -> list[T]:
         if query is None:

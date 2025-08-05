@@ -6,6 +6,7 @@ from .notification_entity import NotificationEntity
 from .submission_entity import SubmissionEntity
 from .post_entity import PostEntity
 from .provider_entity import EnumProvider, ProviderEntity
+from .session_entity import SessionEntity
 
 __all__ = [
     "AccountEntity",
@@ -17,5 +18,6 @@ __all__ = [
     "SubmissionEntity",
     "PostEntity",
     "EnumProvider",
-    "ProviderEntity"
+    "ProviderEntity",
+    "SessionEntity",
 ]

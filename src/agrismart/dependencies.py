@@ -5,7 +5,13 @@ from core.configuration import Configuration
 from core.database import Database, CollectionName
 from core.secures import Cryptography, Jwt
 
-from domain.repositories import AccountRepository, RoleRepository, PostRepository, DiagnosticRepository
+from domain.repositories import (
+    AccountRepository,
+    RoleRepository,
+    PostRepository,
+    DiagnosticRepository,
+    SessionRepository,
+)
 from domain.services import AuthService, AccountService, RoleService, MediaService, DiagnosticService
 from domain.services.post_service import PostService
 
@@ -13,6 +19,7 @@ from infrastructure.apis import Supabase
 from infrastructure.augmenters import Augmenter
 from infrastructure.queues import RabbitMQConnection
 from infrastructure.repositories import DiagnosticRepositoryImpl
+
 
 # Global instances
 # _config = Configuration()
@@ -112,12 +119,21 @@ def build_diagnostic_repository(
     return DiagnosticRepositoryImpl(config)
 
 
+def build_session_repository(
+    database: Database = Depends(build_database),
+) -> SessionRepository:
+    collection = database.get_collection(CollectionName.SESSIONS)
+    return SessionRepository(collection)
+
+
 def build_auth_service(
     account_repository: AccountRepository = Depends(build_account_repository),
+    session_repository: SessionRepository = Depends(build_session_repository),
     supabase: Supabase = Depends(build_supabase),
     jwt: Jwt = Depends(build_jwt),
+    config: Configuration = Depends(config_from_state),
 ) -> AuthService:
-    return AuthService(account_repository, supabase, jwt)
+    return AuthService(account_repository, session_repository, supabase, jwt, config)
 
 
 def build_account_service(

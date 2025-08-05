@@ -10,6 +10,10 @@ class Configuration(BaseSettings):
     CORS_ALLOWED_ORIGINS: str
     MAX_AGE: int = 3600
 
+    # JWT
+    ACCESS_TOKEN_EXPIRATION: int
+    REFRESH_TOKEN_EXPIRATION: int
+
     # database
     LOCAL_URI: str
     REMOTE_URI: str
@@ -17,6 +21,7 @@ class Configuration(BaseSettings):
     IS_SYNC_DATABASE_ENABLED: bool
     SYNC_DATABASE_INTERVAL: int
     IS_ENABLE_ARGUMENTATION: bool
+    CLEAN_SESSION_INTERVAL: int
 
     # roboflow
     ROBOFLOW_KEY: str

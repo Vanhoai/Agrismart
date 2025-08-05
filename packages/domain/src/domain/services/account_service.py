@@ -6,7 +6,7 @@ from core.base import Meta
 from core.exceptions import ExceptionHandler, ErrorCodes
 
 from domain.entities import AccountEntity
-from domain.usecases import ManageAccountUseCase, FindAccountsQuery, CreateAccountRequest
+from domain.usecases import ManageAccountUseCase, FindAccountsQuery, CreateAccountRequest, FindAccountByEmailQuery
 from domain.repositories import AccountRepository
 
 
@@ -45,10 +45,10 @@ class AccountService(ManageAccountUseCase):
 
         return account
 
-    async def find_by_email(self, email: str) -> AccountEntity:
-        account = await self.account_repository.find_one({"email": email})
+    async def find_by_email(self, req: FindAccountByEmailQuery) -> AccountEntity:
+        account = await self.account_repository.find_one({"email": req.email})
         if not account:
-            raise ExceptionHandler(code=ErrorCodes.NOT_FOUND, msg=f"Account with email {email} not found 😂")
+            raise ExceptionHandler(code=ErrorCodes.NOT_FOUND, msg=f"Account with email {req.email} not found 😂")
 
         return account
 
@@ -56,8 +56,8 @@ class AccountService(ManageAccountUseCase):
         account_entity = AccountEntity.create(
             username=req.username,
             email=req.email,
+            password=None,
             avatar=req.avatar,
-            device_token=req.device_token,
         )
 
         existing_account = await self.account_repository.find_one({"email": req.email})
