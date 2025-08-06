@@ -41,3 +41,6 @@ class RefreshTokenParams(CamelModel):
 class ManageAuthSessionUseCase(ABC):
     @abstractmethod
     async def refresh_token(self, params: RefreshTokenParams) -> AuthResponse: ...
+
+    @abstractmethod
+    async def sign_out(self, account_id: str) -> bool: ...

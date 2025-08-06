@@ -1,3 +1,4 @@
+from domain.entities.account_entity import AccountEntity
 from domain.usecases.auth_usecases import RefreshTokenParams
 from fastapi import APIRouter, Depends, Request, status
 
@@ -6,6 +7,7 @@ from domain.services import AuthService
 
 from agrismart.dependencies import build_auth_service
 from agrismart.decorators import exception_decorator, auto_response_decorator
+from agrismart.middlewares import auth_middleware, role_middleware
 
 router = APIRouter(
     prefix="/auth",
@@ -53,3 +55,17 @@ async def refresh_token(
     auth_service: AuthService = Depends(build_auth_service),
 ):
     return await auth_service.refresh_token(body)
+
+
+@router.post("/sign-out")
+@exception_decorator
+@auto_response_decorator(
+    message="Signed out successfully ✅",
+    status_code=status.HTTP_200_OK,
+)
+async def sign_out(
+    account: AccountEntity = Depends(auth_middleware.func),
+    passed: bool = Depends(role_middleware.func(required=[])),
+    auth_service: AuthService = Depends(build_auth_service),
+):
+    return await auth_service.sign_out(str(account.id))

@@ -101,7 +101,7 @@ class AuthService(ManageSignInUseCase, ManageAuthSessionUseCase):
 
             if not google_provider:
                 raise ExceptionHandler(
-                    ErrorCodes.BAD_REQUEST,
+                    ErrorCodes.REQUIRED_AUTHENTICATION,
                     "Please sign in with email and password first, then enable Google OAuth in Settings 🥺",
                 )
         else:
@@ -194,3 +194,7 @@ class AuthService(ManageSignInUseCase, ManageAuthSessionUseCase):
         ]
         await asyncio.gather(*tasks)
         return AuthResponse(access_token=access_token, refresh_token=refresh_token)
+
+    async def sign_out(self, account_id: str) -> bool:
+        await self.session_repository.delete_many({"account_id": ObjectId(account_id)})
+        return True

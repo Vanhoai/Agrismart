@@ -1,11 +1,9 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Query, status
 
-from core.secures import JwtPayload
-
 from domain.usecases import FindAccountsQuery, CreateAccountRequest, FindAccountByEmailQuery, CreateProviderParams
 from domain.services import AccountService
-from domain.entities import EnumRole
+from domain.entities import EnumRole, AccountEntity
 
 from agrismart.dependencies import build_account_service
 from agrismart.middlewares import auth_middleware, role_middleware
@@ -37,11 +35,11 @@ async def find_account_by_email(
     status_code=status.HTTP_200_OK,
 )
 async def find_account_profile(
-    claims: JwtPayload = Depends(auth_middleware.func),
+    account: AccountEntity = Depends(auth_middleware.func),
     passed: bool = Depends(role_middleware.func(required=[])),
     account_service: AccountService = Depends(build_account_service),
 ):
-    return await account_service.find_by_id(claims.account_id)
+    return await account_service.find_by_id(str(account.id))
 
 
 @router.post("/{account_id}/create-provider")
@@ -53,7 +51,7 @@ async def find_account_profile(
 async def create_provider(
     account_id: str,
     params: CreateProviderParams,
-    claims: JwtPayload = Depends(auth_middleware.func),
+    account: AccountEntity = Depends(auth_middleware.func),
     passed: bool = Depends(role_middleware.func(required=[])),
     account_service: AccountService = Depends(build_account_service),
 ):
@@ -68,7 +66,7 @@ async def create_provider(
 )
 async def find_account_by_id(
     account_id: str,
-    claims: JwtPayload = Depends(auth_middleware.func),
+    account: AccountEntity = Depends(auth_middleware.func),
     passed: bool = Depends(role_middleware.func(required=[])),
     account_service: AccountService = Depends(build_account_service),
 ):
@@ -83,7 +81,7 @@ async def find_account_by_id(
 )
 async def find_accounts(
     query: Annotated[FindAccountsQuery, Query()],
-    claims: JwtPayload = Depends(auth_middleware.func),
+    account: AccountEntity = Depends(auth_middleware.func),
     passed: bool = Depends(role_middleware.func(required=[])),
     account_service: AccountService = Depends(build_account_service),
 ):
@@ -98,7 +96,7 @@ async def find_accounts(
 )
 async def create_account(
     req: CreateAccountRequest,
-    claims: JwtPayload = Depends(auth_middleware.func),
+    account: AccountEntity = Depends(auth_middleware.func),
     passed: bool = Depends(role_middleware.func(required=[EnumRole.SUPER])),
     account_service: AccountService = Depends(build_account_service),
 ):
