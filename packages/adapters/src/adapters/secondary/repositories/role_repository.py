@@ -2,7 +2,7 @@ from pymongo.asynchronous.collection import AsyncCollection
 
 from domain.entities import RoleEntity
 from domain.repositories import IRoleRepository
-from adapters.secondary.repositories import BaseRepository
+from .base_repository import BaseRepository
 
 
 class RoleRepository(BaseRepository[RoleEntity], IRoleRepository):

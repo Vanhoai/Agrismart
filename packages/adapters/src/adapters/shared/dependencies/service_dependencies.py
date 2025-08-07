@@ -1,14 +1,10 @@
 from fastapi import Depends
 
-from core.secures import Jwt
 from core.configuration import Configuration
-from domain.services import (
-    AuthService,
-    AccountService,
-    RoleService,
-    MediaService,
-    PostService,
-)
+from core.secures import Jwt
+
+from adapters.secondary import RabbitMQConnection
+from adapters.secondary import Supabase
 
 from domain.repositories import (
     IAccountRepository,
@@ -18,7 +14,20 @@ from domain.repositories import (
     IProviderRepository,
 )
 
-from adapters.secondary import Supabase, RabbitMQConnection
+from domain.services import (
+    AuthService,
+    AccountService,
+    RoleService,
+    MediaService,
+    PostService,
+)
+
+from .shared_dependencies import (
+    config_from_state,
+    queue_from_state,
+    build_supabase,
+    build_jwt,
+)
 
 from .repository_dependencies import (
     build_account_repository,
@@ -27,29 +36,23 @@ from .repository_dependencies import (
     build_session_repository,
     build_provider_repository,
 )
-from .shared_dependencies import (
-    build_supabase,
-    config_from_state,
-    build_jwt,
-    queue_from_state,
-)
 
 
 def build_auth_service(
+    jwt: Jwt = Depends(build_jwt),
+    supabase: Supabase = Depends(build_supabase),
+    config: Configuration = Depends(config_from_state),
     account_repository: IAccountRepository = Depends(build_account_repository),
     session_repository: ISessionRepository = Depends(build_session_repository),
     provider_repository: IProviderRepository = Depends(build_provider_repository),
-    supabase: Supabase = Depends(build_supabase),
-    jwt: Jwt = Depends(build_jwt),
-    config: Configuration = Depends(config_from_state),
 ) -> AuthService:
     return AuthService(
+        jwt,
+        supabase,
+        config,
         account_repository,
         session_repository,
         provider_repository,
-        supabase,
-        jwt,
-        config,
     )
 
 

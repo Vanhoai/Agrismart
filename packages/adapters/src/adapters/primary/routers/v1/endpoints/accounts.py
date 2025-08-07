@@ -8,7 +8,7 @@ from domain.entities import EnumRole, AccountEntity
 from adapters.primary import auth_middleware, role_middleware
 from adapters.primary import auto_response_decorator, exception_decorator
 
-from agrismart.dependencies import build_account_service
+from adapters.shared.dependencies import build_account_service
 
 router = APIRouter(
     prefix="/accounts",

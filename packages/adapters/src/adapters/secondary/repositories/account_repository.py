@@ -2,7 +2,8 @@ from pymongo.asynchronous.collection import AsyncCollection
 
 from domain.entities import AccountEntity
 from domain.repositories import IAccountRepository
-from adapters.secondary.repositories import BaseRepository
+
+from .base_repository import BaseRepository
 
 
 class AccountRepository(BaseRepository[AccountEntity], IAccountRepository):

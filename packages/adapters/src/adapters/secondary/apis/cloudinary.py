@@ -1,7 +1,6 @@
 import cloudinary
 from cloudinary import uploader, api
 from loguru import logger
-
 from core.configuration import Configuration
 
 

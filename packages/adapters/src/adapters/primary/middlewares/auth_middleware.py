@@ -5,7 +5,7 @@ from core.exceptions import ErrorCodes, ExceptionHandler
 from domain.entities import AccountEntity
 from domain.services import AccountService
 
-from agrismart.dependencies import build_account_service, build_jwt
+from adapters.shared.dependencies import build_account_service, build_jwt
 
 
 async def required_authentication(req: Request, jwt: Jwt) -> JwtPayload:

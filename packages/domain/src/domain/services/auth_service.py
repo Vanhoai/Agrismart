@@ -17,22 +17,22 @@ from domain.usecases import (
     AuthWithEmailPasswordRequest,
     ManageAuthSessionUseCase,
 )
-from domain.usecases.auth_usecases import RefreshTokenParams
+from domain.usecases import RefreshTokenParams
 from domain.repositories import IAccountRepository, ISessionRepository, IProviderRepository
 from domain.entities import AccountEntity, SessionEntity, ProviderEntity, EnumProvider
 
-from adapters.secondary import Supabase, UserSupabaseMetadata
+from adapters.secondary import Supabase
 
 
 class AuthService(ManageSignInUseCase, ManageAuthSessionUseCase):
     def __init__(
         self,
+        jwt: Jwt = Depends(),
+        supabase: Supabase = Depends(),
+        config: Configuration = Depends(),
         account_repository: IAccountRepository = Depends(),
         session_repository: ISessionRepository = Depends(),
         provider_repository: IProviderRepository = Depends(),
-        supabase: Supabase = Depends(),
-        jwt: Jwt = Depends(),
-        config: Configuration = Depends(),
     ):
         self.account_repository = account_repository
         self.session_repository = session_repository
@@ -84,7 +84,7 @@ class AuthService(ManageSignInUseCase, ManageAuthSessionUseCase):
         return AuthResponse(access_token=access_token, refresh_token=refresh_token)
 
     async def oauth(self, req: OAuthRequest) -> AuthResponse:
-        user_supabase: UserSupabaseMetadata = self.supabase.sign_in_google(
+        user_supabase = self.supabase.sign_in_google(
             req.id_token,
             req.raw_nonce,
         )

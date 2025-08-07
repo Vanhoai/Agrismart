@@ -1,6 +1,6 @@
 from fastapi import Depends
-
 from core.database import Database, CollectionName
+
 
 from domain.repositories import (
     IAccountRepository,
@@ -9,6 +9,7 @@ from domain.repositories import (
     ISessionRepository,
     IProviderRepository,
 )
+
 
 from adapters.secondary import (
     AccountRepository,

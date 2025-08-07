@@ -11,8 +11,10 @@ from core.configuration import Configuration
 from core.exceptions import ErrorCodes, ExceptionHandler
 from core.secures import Cryptography, KeyBackend
 
-from adapters.primary import v1, v2, RateLimitingMiddleware, TracingMiddleware
-from adapters.secondary import RabbitMQConnection, Cloudinary, build_database
+from adapters.primary import RateLimitingMiddleware, TracingMiddleware
+from adapters.secondary import RabbitMQConnection
+from adapters.secondary import Cloudinary
+from adapters.shared.dependencies import build_database
 
 from agrismart.backgrounds import ManageBackgroundTasks
 
@@ -89,8 +91,8 @@ app.add_middleware(TracingMiddleware)
 # noinspection PyTypeChecker
 app.add_middleware(RateLimitingMiddleware)
 
-app.include_router(v1, prefix="/api/v1")
-app.include_router(v2, prefix="/api/v2")
+# app.include_router(v1, prefix="/api/v1")
+# app.include_router(v2, prefix="/api/v2")
 
 
 # Custom exception handlers when validation fails

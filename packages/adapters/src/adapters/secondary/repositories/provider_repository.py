@@ -2,7 +2,7 @@ from pymongo.asynchronous.collection import AsyncCollection
 
 from domain.entities import ProviderEntity
 from domain.repositories import IProviderRepository
-from adapters.secondary.repositories import BaseRepository
+from .base_repository import BaseRepository
 
 
 class ProviderRepository(BaseRepository[ProviderEntity], IProviderRepository):

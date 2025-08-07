@@ -1,11 +1,12 @@
-import os
 from fastapi import Depends, Request
 
 from core.configuration import Configuration
-from core.database import Database
 from core.secures import Cryptography, Jwt
+from core.database import Database
 
-from adapters.secondary import RabbitMQConnection, Supabase
+from adapters.secondary import RabbitMQConnection
+from adapters.secondary import Supabase
+
 
 # Global instances
 # _config = Configuration()

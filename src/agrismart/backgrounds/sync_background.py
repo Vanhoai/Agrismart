@@ -5,7 +5,7 @@ from loguru import logger
 from typing import Optional
 
 from core.configuration import Configuration
-from adapters.schedulers import SyncScheduler
+from adapters.secondary import SyncScheduler
 
 
 class SyncBackground:

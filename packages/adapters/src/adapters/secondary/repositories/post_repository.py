@@ -2,7 +2,8 @@ from pymongo.asynchronous.collection import AsyncCollection
 
 from domain.entities import PostEntity
 from domain.repositories import IPostRepository
-from adapters.secondary.repositories import BaseRepository
+
+from .base_repository import BaseRepository
 
 
 class PostRepository(BaseRepository[PostEntity], IPostRepository):

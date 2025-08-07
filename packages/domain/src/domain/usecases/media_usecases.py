@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Literal
 
 from fastapi_camelcase import CamelModel
-from adapters.secondary import CloudinaryAsset
+from adapters.shared.models import CloudinaryAsset
 
 
 class UploadMediaRequest(CamelModel):

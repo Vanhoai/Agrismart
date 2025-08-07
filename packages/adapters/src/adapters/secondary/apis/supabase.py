@@ -2,7 +2,7 @@ from supabase import create_client, Client
 from fastapi.encoders import jsonable_encoder
 
 from core.configuration import Configuration
-from adapters.secondary.shared.models import UserSupabaseMetadata
+from adapters.shared.models import UserSupabaseMetadata
 
 
 class Supabase:

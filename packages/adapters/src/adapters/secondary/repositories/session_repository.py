@@ -2,7 +2,7 @@ from pymongo.asynchronous.collection import AsyncCollection
 
 from domain.entities import SessionEntity
 from domain.repositories import ISessionRepository
-from adapters.secondary.repositories import BaseRepository
+from .base_repository import BaseRepository
 
 
 class SessionRepository(BaseRepository[SessionEntity], ISessionRepository):

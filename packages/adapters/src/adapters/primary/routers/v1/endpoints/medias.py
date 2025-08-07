@@ -10,9 +10,9 @@ from core.exceptions import ExceptionHandler, ErrorCodes
 from domain.services import MediaService
 from domain.usecases import UploadMediaRequest
 
-from agrismart.dependencies import build_media_service
-from agrismart.middlewares import auth_middleware, role_middleware
-from agrismart.decorators import exception_decorator
+from adapters.shared.dependencies import build_media_service
+from adapters.primary import auth_middleware, role_middleware
+from adapters.primary import exception_decorator
 
 
 router = APIRouter(
@@ -27,8 +27,8 @@ async def upload_media(
     file: Annotated[bytes, File()],
     folder: Annotated[str, Form()],
     media_type: Annotated[str, Form()],
-    claims: JwtPayload = Depends(auth_middleware.func),
-    passed: bool = Depends(role_middleware.func(required=[])),
+    claims: JwtPayload = Depends(auth_middleware),
+    passed: bool = Depends(role_middleware(required=[])),
     media_service: MediaService = Depends(build_media_service),
 ):
     req = UploadMediaRequest.model_validate({"folder": folder, "media_type": media_type})

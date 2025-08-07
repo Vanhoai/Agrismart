@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import Request, Depends
 
-from agrismart.dependencies import build_role_service
+from adapters.shared.dependencies import build_role_service
 
 from core.exceptions import ExceptionHandler, ErrorCodes
 from domain.entities import EnumRole
