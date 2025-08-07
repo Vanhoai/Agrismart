@@ -5,6 +5,7 @@ from .auth_usecases import (
     AuthWithEmailPasswordRequest,
     ManageAuthSessionUseCase,
     RefreshTokenParams,
+    FaceRecognitionUseCase,
 )
 from .account_usecases import (
     ManageAccountUseCase,

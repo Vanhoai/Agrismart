@@ -18,19 +18,18 @@ from domain.usecases import (
     ManageAuthSessionUseCase,
 )
 from domain.usecases.auth_usecases import RefreshTokenParams
-from domain.repositories import AccountRepository, SessionRepository, ProviderRepository
+from domain.repositories import IAccountRepository, ISessionRepository, IProviderRepository
 from domain.entities import AccountEntity, SessionEntity, ProviderEntity, EnumProvider
 
-from infrastructure.apis import Supabase
-from infrastructure.models import UserSupabaseMetadata
+from adapters.secondary import Supabase, UserSupabaseMetadata
 
 
 class AuthService(ManageSignInUseCase, ManageAuthSessionUseCase):
     def __init__(
         self,
-        account_repository: AccountRepository = Depends(),
-        session_repository: SessionRepository = Depends(),
-        provider_repository: ProviderRepository = Depends(),
+        account_repository: IAccountRepository = Depends(),
+        session_repository: ISessionRepository = Depends(),
+        provider_repository: IProviderRepository = Depends(),
         supabase: Supabase = Depends(),
         jwt: Jwt = Depends(),
         config: Configuration = Depends(),

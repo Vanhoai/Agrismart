@@ -1,17 +1,17 @@
-from .account_repository import AccountRepository
-from .base_repository import BaseRepository
-from .role_repository import RoleRepository
-from .post_repository import PostRepository
-from .diagnostic_repository import DiagnosticRepository
-from .provider_repository import ProviderRepository
-from .session_repository import SessionRepository
+from .base_repository import IBaseRepository
+from .account_repository import IAccountRepository
+from .role_repository import IRoleRepository
+from .post_repository import IPostRepository
+from .diagnostic_repository import IDiagnosticRepository
+from .provider_repository import IProviderRepository
+from .session_repository import ISessionRepository
 
 __all__ = [
-    "AccountRepository",
-    "BaseRepository",
-    "RoleRepository",
-    "PostRepository",
-    "DiagnosticRepository",
-    "ProviderRepository",
-    "SessionRepository",
+    "IBaseRepository",
+    "IAccountRepository",
+    "IRoleRepository",
+    "IPostRepository",
+    "IDiagnosticRepository",
+    "IProviderRepository",
+    "ISessionRepository",
 ]

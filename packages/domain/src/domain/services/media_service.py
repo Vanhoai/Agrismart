@@ -1,6 +1,6 @@
 from domain.usecases import UploadMediaUseCase, UploadMediaRequest
-from infrastructure.apis import Cloudinary
-from infrastructure.models import CloudinaryAsset
+
+from adapters.secondary import Cloudinary, CloudinaryAsset
 
 
 class MediaService(UploadMediaUseCase):

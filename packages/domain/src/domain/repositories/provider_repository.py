@@ -1,7 +1,6 @@
-from .base_repository import BaseRepository
 from domain.entities import ProviderEntity
+from domain.repositories import IBaseRepository
 
 
-class ProviderRepository(BaseRepository[ProviderEntity]):
-    def __init__(self, collection):
-        super().__init__(collection, ProviderEntity)
+class IProviderRepository(IBaseRepository[ProviderEntity]):
+    pass

@@ -9,7 +9,6 @@ class DiseaseEntity(BaseEntity):
     @staticmethod
     def create(name: str, description: str) -> "DiseaseEntity":
         return DiseaseEntity(
-            _id=None,
             name=name,
             description=description,
             created_at=TimeHelper.vn_timezone(),

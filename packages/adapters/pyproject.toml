@@ -1,0 +1,13 @@
+[project]
+name = "adapters"
+version = "0.1.0"
+authors = [{ name = "Hinsun", email = "vanhoai.adv@gmail.com" }]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+adapters = "adapters:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

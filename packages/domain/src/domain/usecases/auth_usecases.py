@@ -44,3 +44,12 @@ class ManageAuthSessionUseCase(ABC):
 
     @abstractmethod
     async def sign_out(self, account_id: str) -> bool: ...
+
+
+# ============================== FACE RECOGNITION USE CASE ==============================
+class FaceRecognitionUseCase(ABC):
+    @abstractmethod
+    def enroll_face_for_account(self) -> None: ...
+
+    @abstractmethod
+    def authenticate_with_face(self) -> None: ...

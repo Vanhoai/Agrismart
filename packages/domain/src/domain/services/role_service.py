@@ -6,15 +6,15 @@ from core.base import Meta
 from core.exceptions import ExceptionHandler, ErrorCodes
 
 from domain.usecases import ManageRoleUseCase, CreateRoleRequest, FindRolesQuery, UpdateRoleRequest
-from domain.repositories import RoleRepository, AccountRepository
+from domain.repositories import IRoleRepository, IAccountRepository
 from domain.entities import RoleEntity
 
 
 class RoleService(ManageRoleUseCase):
     def __init__(
         self,
-        role_repository: RoleRepository = Depends(),
-        account_repository: AccountRepository = Depends(),
+        role_repository: IRoleRepository = Depends(),
+        account_repository: IAccountRepository = Depends(),
     ):
         self.role_repository = role_repository
         self.account_repository = account_repository
@@ -73,5 +73,5 @@ class RoleService(ManageRoleUseCase):
         if not entity:
             raise ExceptionHandler(ErrorCodes.NOT_FOUND, f"Role with ID {role_id} not found in database 🐶")
 
-        await self.role_repository.delete_one(role_id)
+        await self.role_repository.delete_one({"_id": ObjectId(role_id)})
         return entity

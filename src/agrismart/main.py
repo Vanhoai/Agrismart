@@ -10,13 +10,10 @@ from contextlib import asynccontextmanager
 from core.configuration import Configuration
 from core.exceptions import ErrorCodes, ExceptionHandler
 from core.secures import Cryptography, KeyBackend
-from infrastructure.apis import Cloudinary
-from infrastructure.queues import RabbitMQConnection
 
-from agrismart.routers.v1.routes import router as v1
-from agrismart.routers.v2.routes import router as v2
-from agrismart.middlewares import RateLimitingMiddleware, TracingMiddleware
-from agrismart.dependencies import augmenter_monitor, build_database
+from adapters.primary import v1, v2, RateLimitingMiddleware, TracingMiddleware
+from adapters.secondary import RabbitMQConnection, Cloudinary, build_database
+
 from agrismart.backgrounds import ManageBackgroundTasks
 
 
@@ -25,7 +22,8 @@ async def lifespan(application: FastAPI):
     # Startup
     configuration = Configuration()
     if configuration.IS_ENABLE_ARGUMENTATION:
-        await augmenter_monitor(configuration)
+        # await augmenter_monitor(configuration)
+        pass
     else:
         logger.info("Argumentation is disabled, skipping augmenter monitor 🐶")
 

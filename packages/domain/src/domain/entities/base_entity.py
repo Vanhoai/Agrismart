@@ -12,4 +12,3 @@ class BaseEntity(CamelModel, ABC):
     created_at: datetime
     updated_at: datetime
     deleted_at: Optional[datetime]
-    

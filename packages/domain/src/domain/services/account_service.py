@@ -14,16 +14,16 @@ from domain.usecases import (
     ManageAccountProviderUseCase,
     CreateProviderParams,
 )
-from domain.repositories import AccountRepository, ProviderRepository
+from domain.repositories import IAccountRepository, IProviderRepository
 
-from infrastructure.apis import Supabase
+from adapters.secondary import Supabase
 
 
 class AccountService(ManageAccountUseCase, ManageAccountProviderUseCase):
     def __init__(
         self,
-        account_repository: AccountRepository = Depends(),
-        provider_repository: ProviderRepository = Depends(),
+        account_repository: IAccountRepository = Depends(),
+        provider_repository: IProviderRepository = Depends(),
         supabase: Supabase = Depends(),
     ):
         self.account_repository = account_repository
