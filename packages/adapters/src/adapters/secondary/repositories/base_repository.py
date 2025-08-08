@@ -19,7 +19,8 @@ class BaseRepository(IBaseRepository[T]):
         self.model = model
 
     def convert_doc_to_entity(self, doc: dict) -> T:
-        doc["_id"] = str(doc["_id"])
+        # NOTE: doc["id"] is field will be converted for encode and decode json field
+        doc["id"] = str(doc["_id"])
 
         # convert all fields contain "_id" from ObjectId to string
         for key, value in doc.items():
