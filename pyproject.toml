@@ -12,6 +12,7 @@ dependencies = [
     "cloudinary>=1.44.1",
     "cryptography>=45.0.5",
     "facenet-pytorch>=2.6.0",
+    "faiss-cpu>=1.11.0.post1",
     "faker>=37.5.3",
     "fastapi-camelcase>=2.0.0",
     "fastapi[standard]>=0.116.1",
@@ -45,7 +46,7 @@ members = [
     "packages/vision",
     "packages/core",
     "packages/domain",
-    "packages/infrastructure",
+    "packages/adapters",
 ]
 
 [project.scripts]
@@ -62,4 +63,4 @@ build-backend = "hatchling.build"
 core = { workspace = true }
 vision = { workspace = true }
 domain = { workspace = true }
-infrastructure = { workspace = true }
+adapters = { workspace = true }

@@ -65,7 +65,7 @@ The project follows a clean architecture pattern with the following structure:
 ├── 📦 packages/                # Modular packages
 │   ├── core/                   # Core utilities & helpers
 │   ├── domain/                 # Business logic & entities
-│   ├── infrastructure/         # External services & data
+│   ├── adapters/         # External services & data
 │   └── vision/                 # Computer vision & ML
 ├── 📊 datasets/               # Training & validation data
 ├── 📚 docs/                   # Documentation
@@ -205,7 +205,7 @@ The system processes images through the vision pipeline:
 
 - **[`core`](packages/core/)** - Shared utilities, helpers, and configurations
 - **[`domain`](packages/domain/)** - Business entities, use cases, and repository interfaces
-- **[`infrastructure`](packages/infrastructure/)** - External service implementations
+- **[`adapters`](packages/adapters/)** - External service implementations
 - **[`vision`](packages/vision/)** - Computer vision and ML components
 
 #### Key Components

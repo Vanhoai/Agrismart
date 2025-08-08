@@ -8,6 +8,7 @@ from core.configuration import Configuration
 
 class CollectionName(str, Enum):
     ACCOUNTS = "accounts"
+    PROVIDERS = "providers"
     ROLES = "roles"
     SESSIONS = "sessions"
     SUBMISSIONS = "submissions"

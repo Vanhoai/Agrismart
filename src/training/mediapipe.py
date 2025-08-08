@@ -4,13 +4,13 @@ import mediapipe as mp
 import numpy as np
 from loguru import logger
 
-mp_face_mesh = mp.solutions.face_mesh
+mp_face_mesh = mp.solutions.face_mesh  # type: ignore
 face_mesh = mp_face_mesh.FaceMesh(
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5,
 )
 
-mp_drawing = mp.solutions.drawing_utils
+mp_drawing = mp.solutions.drawing_utils  # type: ignore
 drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
 
 
@@ -58,10 +58,10 @@ def main() -> None:
                         x, y = int(lm.x * w), int(lm.y * h)
 
                         # Get 2D coordinates
-                        face_2d.append([x, y])
+                        face_2d.append([x, y])  # type: ignore
 
                         # Get 3D coordinates
-                        face_3d.append([x, y, lm.z])
+                        face_3d.append([x, y, lm.z])  # type: ignore
 
                 logger.info(f"Face 2D: {face_2d}")
                 logger.info(f"Face 3D: {face_3d}")
@@ -72,11 +72,9 @@ def main() -> None:
 
                 # The camera matrix
                 focal_length = 1 * w
-                camera_matrix = np.array([
-                    [focal_length, 0, h / 2],
-                    [0, focal_length, w / 2],
-                    [0, 0, 1]
-                ], dtype=np.float64)
+                camera_matrix = np.array(
+                    [[focal_length, 0, h / 2], [0, focal_length, w / 2], [0, 0, 1]], dtype=np.float64
+                )
                 # The distortion matrix
                 dist_matrix = np.zeros((4, 1), dtype=np.float64)
 
@@ -99,12 +97,12 @@ def main() -> None:
                 y = angles[1] * 360
                 z = angles[2] * 360
 
-                threshold["x_min"] = min(threshold["x_min"], x)
-                threshold["x_max"] = max(threshold["x_max"], x)
-                threshold["y_min"] = min(threshold["y_min"], y)
-                threshold["y_max"] = max(threshold["y_max"], y)
-                threshold["z_min"] = min(threshold["z_min"], z)
-                threshold["z_max"] = max(threshold["z_max"], z)
+                threshold["x_min"] = min(threshold["x_min"], x)  # type: ignore
+                threshold["x_max"] = max(threshold["x_max"], x)  # type: ignore
+                threshold["y_min"] = min(threshold["y_min"], y)  # type: ignore
+                threshold["y_max"] = max(threshold["y_max"], y)  # type: ignore
+                threshold["z_min"] = min(threshold["z_min"], z)  # type: ignore
+                threshold["z_max"] = max(threshold["z_max"], z)  # type: ignore
 
                 if y < -10:
                     message = "Looking Left"
@@ -118,21 +116,22 @@ def main() -> None:
                     message = "Forward"
 
                 nose_3d_projection, jacobian = cv2.projectPoints(
-                    nose_3d,
+                    nose_3d,  # type: ignore
                     rotation_vector,
                     translation_vector,
                     camera_matrix,
-                    dist_matrix
+                    dist_matrix,
                 )
 
-                p1 = (int(nose_2d[0]), int(nose_2d[1]))
-                p2 = (int(nose_2d[0] + y * 10), int(nose_2d[1] - x * 10))
+                p1 = (int(nose_2d[0]), int(nose_2d[1]))  # type: ignore
+                p2 = (int(nose_2d[0] + y * 10), int(nose_2d[1] - x * 10))  # type: ignore
 
                 cv2.line(frame, p1, p2, (255, 0, 0), 3)
 
                 cv2.putText(frame, message, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
-                cv2.putText(frame, f"X: {x:.2f}, Y: {y:.2f}, Z: {z:.2f}", (20, 100), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                            (0, 255, 0), 2)
+                cv2.putText(
+                    frame, f"X: {x:.2f}, Y: {y:.2f}, Z: {z:.2f}", (20, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2
+                )
 
             end = time.time()
             total = end - start

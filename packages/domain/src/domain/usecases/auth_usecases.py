@@ -7,6 +7,8 @@ from fastapi_camelcase import CamelModel
 class OAuthRequest(CamelModel):
     id_token: str
     raw_nonce: str
+    device_token: str
+    ip_address: str = "0.0.0.0"
 
 
 class AuthResponse(CamelModel):
@@ -17,14 +19,13 @@ class AuthResponse(CamelModel):
 class AuthWithEmailPasswordRequest(CamelModel):
     email: str
     password: str = Field(min_length=5)
+    device_token: str
+    ip_address: str = "0.0.0.0"
 
 
 class ManageSignInUseCase(ABC):
     @abstractmethod
     async def oauth(self, req: OAuthRequest) -> AuthResponse: ...
-
-    @abstractmethod
-    async def face_auth(self): ...
 
     @abstractmethod
     async def auth_with_email_password(self, req: AuthWithEmailPasswordRequest) -> AuthResponse: ...
@@ -33,8 +34,22 @@ class ManageSignInUseCase(ABC):
 # ============================== MANAGE AUTH SESSION USE CASE ==============================
 class RefreshTokenParams(CamelModel):
     refresh_token: str
+    device_token: str
+    ip_address: str = "0.0.0.0"
 
 
 class ManageAuthSessionUseCase(ABC):
     @abstractmethod
     async def refresh_token(self, params: RefreshTokenParams) -> AuthResponse: ...
+
+    @abstractmethod
+    async def sign_out(self, account_id: str) -> bool: ...
+
+
+# ============================== FACE RECOGNITION USE CASE ==============================
+class FaceRecognitionUseCase(ABC):
+    @abstractmethod
+    def enroll_face_for_account(self) -> None: ...
+
+    @abstractmethod
+    def authenticate_with_face(self) -> None: ...

@@ -5,12 +5,15 @@ from .auth_usecases import (
     AuthWithEmailPasswordRequest,
     ManageAuthSessionUseCase,
     RefreshTokenParams,
+    FaceRecognitionUseCase,
 )
 from .account_usecases import (
     ManageAccountUseCase,
     FindAccountsQuery,
     CreateAccountRequest,
     FindAccountByEmailQuery,
+    ManageAccountProviderUseCase,
+    CreateProviderParams,
 )
 from .role_usecases import ManageRoleUseCase, CreateRoleRequest, FindRolesQuery, UpdateRoleRequest
 from .media_usecases import UploadMediaUseCase, UploadMediaRequest
@@ -32,6 +35,8 @@ __all__ = [
     "FindAccountsQuery",
     "CreateAccountRequest",
     "FindAccountByEmailQuery",
+    "ManageAccountProviderUseCase",
+    "CreateProviderParams",
     # role
     "ManageRoleUseCase",
     "CreateRoleRequest",

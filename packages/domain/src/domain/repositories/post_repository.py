@@ -1,7 +1,6 @@
 from domain.entities import PostEntity
-from domain.repositories.base_repository import BaseRepository
+from domain.repositories import IBaseRepository
 
 
-class PostRepository(BaseRepository[PostEntity]):
-    def __init__(self, collection):
-        super().__init__(collection, PostEntity)
+class IPostRepository(IBaseRepository[PostEntity]):
+    pass

@@ -1,7 +1,6 @@
 from domain.entities import RoleEntity
-from domain.repositories.base_repository import BaseRepository
+from domain.repositories import IBaseRepository
 
 
-class RoleRepository(BaseRepository[RoleEntity]):
-    def __init__(self, collection):
-        super().__init__(collection, RoleEntity)
+class IRoleRepository(IBaseRepository[RoleEntity]):
+    pass

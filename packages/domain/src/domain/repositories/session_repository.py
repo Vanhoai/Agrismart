@@ -1,7 +1,6 @@
-from .base_repository import BaseRepository
 from domain.entities import SessionEntity
+from domain.repositories import IBaseRepository
 
 
-class SessionRepository(BaseRepository[SessionEntity]):
-    def __init__(self, collection):
-        super().__init__(collection, SessionEntity)
+class ISessionRepository(IBaseRepository[SessionEntity]):
+    pass

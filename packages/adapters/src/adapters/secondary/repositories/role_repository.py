@@ -1,0 +1,10 @@
+from pymongo.asynchronous.collection import AsyncCollection
+
+from domain.entities import RoleEntity
+from domain.repositories import IRoleRepository
+from .base_repository import BaseRepository
+
+
+class RoleRepository(BaseRepository[RoleEntity], IRoleRepository):
+    def __init__(self, collection: AsyncCollection):
+        super().__init__(collection, RoleEntity)

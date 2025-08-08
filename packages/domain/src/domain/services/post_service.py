@@ -2,17 +2,17 @@ from bson import ObjectId
 from fastapi import Depends
 
 from domain.entities import PostEntity
-from domain.repositories import PostRepository, AccountRepository
+from domain.repositories import IPostRepository, IAccountRepository
 from domain.usecases import ManagePostUseCase, CreatePostRequest
 
-from infrastructure.queues import RabbitMQConnection
+from adapters.secondary import RabbitMQConnection
 
 
 class PostService(ManagePostUseCase):
     def __init__(
         self,
-        post_repository: PostRepository = Depends(),
-        account_repository: AccountRepository = Depends(),
+        post_repository: IPostRepository = Depends(),
+        account_repository: IAccountRepository = Depends(),
         queue: RabbitMQConnection = Depends(),
     ):
         self.post_repository = post_repository
