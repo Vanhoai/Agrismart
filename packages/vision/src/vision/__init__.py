@@ -1,3 +1,3 @@
-from . import dataset, functions, constants, face_recognition
+from . import dataset, functions, constants, face
 
-__all__ = ["dataset", "functions", "constants", "face_recognition"]
+__all__ = ["dataset", "functions", "constants", "face"]

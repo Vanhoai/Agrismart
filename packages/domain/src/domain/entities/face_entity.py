@@ -37,7 +37,7 @@ class FaceEmbedding(CamelModel):
 class FaceEntity(BaseEntity):
     account_id: str
     embeddings: List[FaceEmbedding]
-    enrollment_status: EnrollmentStatus = EnrollmentStatus.INCOMPLETE
+    enrollment_status: EnrollmentStatus
 
     @staticmethod
     def create(
@@ -53,3 +53,10 @@ class FaceEntity(BaseEntity):
             updated_at=TimeHelper.vn_timezone(),
             deleted_at=None,
         )
+
+    def is_enrollment_complete(self) -> bool:
+        return len(self.embeddings) >= MIN_EMBEDDINGS_REQUIRED and self.has_diverse_poses()
+
+    def has_diverse_poses(self) -> bool:
+        poses = {emb.pose_type.value for emb in self.embeddings}
+        return "frontal" in poses and len(poses) >= 3
